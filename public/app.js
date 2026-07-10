@@ -91,6 +91,180 @@ const I18N = {
   },
 };
 
+const HINTS = {
+  flowSessions: {
+    zh: { s: '由 Adyen 托管支付流程，后端接入更简单。', l: 'Sessions 适合想快速上线的接入方式。你的后端只需要创建一次 session，之后支付过程中的状态、跳转和部分细节由 Adyen 组件接管。它适合标准 checkout，也方便商户先理解完整支付链路。' },
+    en: { s: 'Adyen hosts the payment flow; simplest backend integration.', l: 'Sessions is the fastest way to go live. Your backend only creates a session once, then Adyen components take over state, redirects and most details during payment. Great for standard checkout and for understanding the full flow first.' },
+  },
+  flowAdvanced: {
+    zh: { s: '前后端可完全控制，适合复杂支付场景。', l: 'Advanced 适合需要更多控制权的场景。你可以在前端触发 submit，在后端显式调用 paymentMethods、payments 和 details，更容易插入风控、订单校验、日志追踪和自定义错误处理。' },
+    en: { s: 'Full front/back control; suited to complex payment cases.', l: 'Advanced gives you more control. You trigger submit on the frontend and explicitly call paymentMethods, payments and details on the backend, making it easier to add risk checks, order validation, logging and custom error handling.' },
+  },
+  compDropin: {
+    zh: { s: '使用预置界面，自动展示可用支付方式。', l: 'Drop-in 是最完整的预置支付界面。它会根据 merchant 配置、国家、币种和浏览器能力展示多个支付方式，适合演示“商户上线后用户看到的整体支付体验”。' },
+    en: { s: 'Prebuilt UI that auto-lists available payment methods.', l: 'Drop-in is the most complete prebuilt UI. It shows multiple payment methods based on your merchant config, country, currency and browser capabilities, ideal for demoing the full shopper experience after go-live.' },
+  },
+  compSingle: {
+    zh: { s: '只渲染指定支付方式，例如信用卡或 PayPal。', l: 'Single Component 只渲染一个支付方式，例如 Card、PayPal 或 Klarna。它适合逐个排查支付方式，也适合商户已有自己的 checkout 页面，只想把某个 Adyen 组件嵌入进去。' },
+    en: { s: 'Renders only one method, e.g. card or PayPal.', l: 'Single Component renders just one payment method such as Card, PayPal or Klarna. Handy for testing methods one by one, or when you already have your own checkout page and only want to embed a single Adyen component.' },
+  },
+  showPayButton: {
+    zh: { s: '是否显示组件自带的付款按钮。', l: 'showPayButton 决定组件是否显示自己的付款按钮。开启时体验更接近开箱即用；关闭时通常需要商户页面自己提供按钮，并调用组件提交逻辑。' },
+    en: { s: 'Whether the component shows its own pay button.', l: 'showPayButton controls whether the component renders its own pay button. On feels more out-of-the-box; off usually means your page provides the button and calls the component submit logic itself.' },
+  },
+  openFirst: {
+    zh: { s: '进入页面后自动展开第一个支付方式。', l: 'openFirstPaymentMethod 会让第一个支付方式默认展开。适合减少用户点击，也方便测试人员刷新页面后直接看到第一个支付方式的字段状态。' },
+    en: { s: 'Auto-expand the first payment method on load.', l: 'openFirstPaymentMethod expands the first payment method by default. Reduces shopper clicks and lets testers see the first method’s fields immediately after a page refresh.' },
+  },
+  holderName: {
+    zh: { s: '是否显示持卡人姓名字段。', l: 'holderName 会在 Card 里显示持卡人姓名字段。某些商户希望采集更完整的持卡信息，用于订单记录、风控或客服排查。' },
+    en: { s: 'Whether to show the cardholder name field.', l: 'holderName shows the cardholder name field in the Card component. Some merchants collect fuller card details for order records, risk checks or customer support.' },
+  },
+  enableStoreDetails: {
+    zh: { s: '是否显示“保存支付详情以备下次使用”。', l: 'enableStoreDetails 会显示保存支付详情的选项。真实生产使用通常还需要 shopperReference 等 shopper 信息配合，这里主要用于观察前端 UI 的变化。' },
+    en: { s: 'Whether to show “save payment details for next time”.', l: 'enableStoreDetails shows the save-details option. Real production use also needs shopper info such as shopperReference; here it mainly lets you observe the frontend UI change.' },
+  },
+  hideCVC: {
+    zh: { s: '隐藏卡片背面的安全码字段。', l: 'hideCVC 会隐藏安全码字段。它一般只适合特定存卡、低风险或复用支付方式的测试场景，不建议在普通新卡支付里随意开启。' },
+    en: { s: 'Hide the security code (CVC) field.', l: 'hideCVC hides the security-code field. Usually only suitable for stored-card, low-risk or reused payment-method tests; not recommended for normal new-card payments.' },
+  },
+  billingAddressRequired: {
+    zh: { s: '要求填写完整账单地址。', l: 'billingAddressRequired 会要求用户填写完整账单地址。它常用于风控、发票、地区合规或部分卡组织规则相关的场景。' },
+    en: { s: 'Require the shopper to enter a full billing address.', l: 'billingAddressRequired forces the shopper to enter a full billing address. Often used for risk, invoicing, regional compliance or certain card-scheme rules.' },
+  },
+  challengeWindowSize: {
+    zh: { s: '设置 3DS 验证窗口大小。', l: 'challengeWindowSize 控制 3DS 挑战验证窗口尺寸。不同尺寸会影响银行验证页的展示空间，适合演示 3DS 用户体验差异。' },
+    en: { s: 'Set the 3DS challenge window size.', l: 'challengeWindowSize controls the 3DS challenge window dimensions. Different sizes affect how the bank’s verification page is shown, useful for demoing 3DS UX differences.' },
+  },
+  brands: {
+    zh: { s: '限制 Card 组件允许展示的卡品牌，留空表示不限制。', l: 'brands 限制 Card 组件允许展示的卡品牌，例如只允许 visa、mc。留空表示不限制，按商户支持的品牌自动展示。' },
+    en: { s: 'Limit which card brands the Card component allows; empty = all.', l: 'brands limits which card brands the Card component accepts, e.g. only visa, mc. Leave empty to allow all brands supported by your merchant account.' },
+  },
+  showBrandIcon: {
+    zh: { s: '是否在卡号输入框右侧显示识别到的卡品牌图标。', l: 'showBrandIcon 控制是否在卡号输入框旁显示识别到的卡品牌图标。关闭后界面更简洁，但用户看不到实时的卡品牌反馈。' },
+    en: { s: 'Show the detected card brand icon next to the number field.', l: 'showBrandIcon controls whether the detected card-brand icon appears next to the card number field. Turning it off is cleaner but removes real-time brand feedback for shoppers.' },
+  },
+  enableScanning: {
+    zh: { s: '在支持的移动设备上启用扫码/扫描卡片能力。', l: 'enableScanning 在支持的移动设备上启用扫描实体卡片的能力，让用户无需手动输入卡号，适合移动端体验演示。' },
+    en: { s: 'Enable card scanning on supported mobile devices.', l: 'enableScanning turns on physical-card scanning on supported mobile devices so shoppers avoid typing the card number, useful for mobile UX demos.' },
+  },
+  billingAddressMode: {
+    zh: { s: '控制账单地址采集模式，full 会展示更完整地址字段。', l: 'billingAddressMode 控制账单地址采集方式：partial 只采集少量字段，full 展示更完整的地址表单。用于平衡转化率与风控需求。' },
+    en: { s: 'Control billing address capture; full shows more fields.', l: 'billingAddressMode controls billing address capture: partial collects few fields, full shows a more complete address form. Balances conversion against risk needs.' },
+  },
+  showRemovePaymentMethodButton: {
+    zh: { s: '在存在 stored payment methods 时显示删除按钮。', l: 'showRemovePaymentMethodButton 在有已保存支付方式时显示删除按钮，让用户可以移除保存过的卡片，常用于账户/钱包管理场景。' },
+    en: { s: 'Show a remove button for stored payment methods.', l: 'showRemovePaymentMethodButton shows a delete button when stored payment methods exist, letting shoppers remove saved cards. Common in account/wallet management flows.' },
+  },
+  showStoredPaymentMethods: {
+    zh: { s: '是否展示用户已保存的支付方式。', l: 'showStoredPaymentMethods 控制是否在 Drop-in 顶部展示用户已保存的支付方式。关闭后每次都当作新支付方式处理。' },
+    en: { s: 'Whether to display the shopper’s stored payment methods.', l: 'showStoredPaymentMethods controls whether Drop-in shows the shopper’s saved payment methods at the top. When off, every payment is treated as a new method.' },
+  },
+  walletButtonType: {
+    zh: { s: '控制钱包按钮文案/样式，适用于 Apple Pay 或 Google Pay 测试。', l: 'buttonType 控制 Apple Pay / Google Pay 钱包按钮的文案与样式，例如 buy、pay、checkout，用于匹配不同下单场景的按钮语义。' },
+    en: { s: 'Control wallet button label/style for Apple Pay or Google Pay.', l: 'buttonType controls the Apple Pay / Google Pay wallet button label and style, e.g. buy, pay, checkout, to match the semantics of different ordering scenarios.' },
+  },
+  walletButtonColor: {
+    zh: { s: '控制钱包按钮颜色，不同钱包支持值可能略有差异。', l: 'buttonColor 控制钱包按钮的颜色，例如 black、white。不同钱包支持的取值可能略有差异，用于适配页面深浅色背景。' },
+    en: { s: 'Control wallet button color; supported values vary by wallet.', l: 'buttonColor controls the wallet button color, e.g. black, white. Supported values can vary by wallet, useful for matching light or dark page backgrounds.' },
+  },
+  presetCards: {
+    zh: { s: '点击后复制卡号，不改变当前组件。', l: '测试卡用于快速复制卡号。点击后不会改变当前组件，只会复制卡号；有效期和 CVC 直接显示在灰字里，方便粘贴到 Adyen 安全输入框。' },
+    en: { s: 'Click to copy the card number; the component is unchanged.', l: 'Test cards let you quickly copy a card number. Clicking does not change the current component, it only copies the number; expiry and CVC are shown in the gray text for pasting into Adyen secured fields.' },
+  },
+  amountCurrency: {
+    zh: { s: '修改金额和币种后，会立即更新购物车总计。', l: '金额或币种变化会重新请求可用支付方式。这样可以快速观察不同币种、金额组合下，前端展示的支付方式是否发生变化。' },
+    en: { s: 'Changing amount and currency updates the cart total instantly.', l: 'Changing amount or currency re-requests available payment methods, so you can quickly see how the displayed methods change across different currency and amount combinations.' },
+  },
+};
+
+const HINT_EXTRA = {
+  flowSessions: {
+    fe: { zh: '调用 AdyenCheckout({ session }) 并挂载 Drop-in / 组件。', en: 'Calls AdyenCheckout({ session }) and mounts Drop-in / component.' },
+    be: { zh: 'POST /sessions：一次创建会话，返回 id + sessionData。', en: 'POST /sessions: create once, returns id + sessionData.' },
+  },
+  flowAdvanced: {
+    fe: { zh: '前端依次触发 paymentMethods、onSubmit、onAdditionalDetails 回调。', en: 'Frontend triggers paymentMethods, onSubmit and onAdditionalDetails callbacks.' },
+    be: { zh: 'POST /paymentMethods → POST /payments → POST /payments/details。', en: 'POST /paymentMethods → POST /payments → POST /payments/details.' },
+  },
+  compDropin: {
+    fe: { zh: "checkout.create('dropin') 挂载全部支付方式。", en: "checkout.create('dropin') mounts all payment methods." },
+    be: { zh: '沿用 /sessions 或 /payments 接口，无额外字段。', en: 'Reuses the /sessions or /payments endpoints, no extra fields.' },
+  },
+  compSingle: {
+    fe: { zh: "checkout.create(type)（如 'card'）只挂载单个组件。", en: "checkout.create(type) e.g. 'card' mounts a single component." },
+    be: { zh: '请求里的 paymentMethod.type 固定为所选类型。', en: 'paymentMethod.type in the request is fixed to the chosen type.' },
+  },
+  showPayButton: {
+    fe: { zh: 'dropin / 组件的 showPayButton 选项。', en: 'The showPayButton option on dropin / component.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  openFirst: {
+    fe: { zh: 'dropin 的 openFirstPaymentMethod 选项。', en: 'The openFirstPaymentMethod option on dropin.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  holderName: {
+    fe: { zh: 'card 的 hasHolderName / holderNameRequired。', en: 'card hasHolderName / holderNameRequired.' },
+    be: { zh: '持卡人姓名进入 paymentMethod.holderName 一并发送。', en: 'Cardholder name is sent inside paymentMethod.holderName.' },
+  },
+  enableStoreDetails: {
+    fe: { zh: 'card 的 enableStoreDetails；勾选后 state 带 storePaymentMethod=true。', en: 'card enableStoreDetails; once ticked state carries storePaymentMethod=true.' },
+    be: { zh: '触发 storePaymentMethod + shopperReference + recurringProcessingModel=CardOnFile + shopperInteraction=Ecommerce（本 demo 自动补齐）。', en: 'Triggers storePaymentMethod + shopperReference + recurringProcessingModel=CardOnFile + shopperInteraction=Ecommerce (auto-added by this demo).' },
+  },
+  hideCVC: {
+    fe: { zh: 'card 的 hideCVC 选项。', en: 'card hideCVC option.' },
+    be: { zh: '纯前端 UI；影响是否采集 CVC，不新增字段。', en: 'Frontend-only UI; affects CVC capture, adds no field.' },
+  },
+  billingAddressRequired: {
+    fe: { zh: 'card 的 billingAddressRequired。', en: 'card billingAddressRequired.' },
+    be: { zh: '采集到的地址进入请求的 billingAddress 对象。', en: 'Collected address is sent as the billingAddress object.' },
+  },
+  challengeWindowSize: {
+    fe: { zh: '通过 reqBody 传给后端用于 3DS2 请求。', en: 'Passed to the backend via reqBody for the 3DS2 request.' },
+    be: { zh: 'authenticationData.threeDSRequestData.challengeWindowSize。', en: 'authenticationData.threeDSRequestData.challengeWindowSize.' },
+  },
+  brands: {
+    fe: { zh: 'card 的 brands 数组。', en: 'card brands array.' },
+    be: { zh: '纯前端限制；后端仍按实际卡 BIN 处理。', en: 'Frontend-only restriction; backend still resolves by real card BIN.' },
+  },
+  showBrandIcon: {
+    fe: { zh: 'card 的 showBrandIcon。', en: 'card showBrandIcon.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  enableScanning: {
+    fe: { zh: 'card 的 enableScanning。', en: 'card enableScanning.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  billingAddressMode: {
+    fe: { zh: 'card 的 billingAddressMode（partial / full）。', en: 'card billingAddressMode (partial / full).' },
+    be: { zh: '影响 billingAddress 采集的字段数量。', en: 'Affects how many billingAddress fields are collected.' },
+  },
+  showRemovePaymentMethodButton: {
+    fe: { zh: 'dropin 的 showRemovePaymentMethodButton。', en: 'dropin showRemovePaymentMethodButton.' },
+    be: { zh: '删除动作对应 disable stored payment method 接口（本 demo 未实现）。', en: 'Removal maps to the disable stored payment method API (not implemented here).' },
+  },
+  showStoredPaymentMethods: {
+    fe: { zh: 'dropin 的 showStoredPaymentMethods。', en: 'dropin showStoredPaymentMethods.' },
+    be: { zh: '需请求带 shopperReference 才会返回 storedPaymentMethods。', en: 'Requires shopperReference in the request to return storedPaymentMethods.' },
+  },
+  walletButtonType: {
+    fe: { zh: 'paywithgoogle / applepay 的 buttonType。', en: 'paywithgoogle / applepay buttonType.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  walletButtonColor: {
+    fe: { zh: 'paywithgoogle / applepay 的 buttonColor。', en: 'paywithgoogle / applepay buttonColor.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  presetCards: {
+    fe: { zh: '仅复制卡号到剪贴板，不改动组件配置。', en: 'Only copies the number to clipboard; no component config change.' },
+    be: { zh: '无后端字段。', en: 'No backend field.' },
+  },
+  amountCurrency: {
+    fe: { zh: '更新 amount.value 与 amount.currency 并重新初始化。', en: 'Updates amount.value and amount.currency then re-initializes.' },
+    be: { zh: 'amount.value + amount.currency（/sessions、/paymentMethods、/payments 均带）。', en: 'amount.value + amount.currency (sent on /sessions, /paymentMethods, /payments).' },
+  },
+};
+
 const TEST_CARDS = [
   { label: 'Visa', icon: '💳', number: '4111 1111 1111 1111', expiry: '03/30', cvc: '737' },
   { label: 'Mastercard', icon: '💳', number: '5577 0000 5577 0004', expiry: '03/30', cvc: '737' },
@@ -184,6 +358,10 @@ function applyI18n() {
     const key = el.getAttribute('data-i18n');
     if (I18N[lang][key]) el.textContent = I18N[lang][key];
   });
+  document.querySelectorAll('.eli5[data-hint]').forEach((el) => {
+    const hint = HINTS[el.getAttribute('data-hint')];
+    if (hint && hint[lang]) el.textContent = hint[lang].s;
+  });
   $('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
   renderTestCards();
 }
@@ -233,15 +411,29 @@ function compactRequest(body) {
   ['amount', 'currency', 'countryCode', 'shopperLocale', 'allowedPaymentMethods'].forEach((key) => {
     if (body[key] !== undefined && body[key] !== null && body[key] !== '') out[key] = body[key];
   });
-  if (body.stateData && body.stateData.paymentMethod) {
-    out.paymentMethod = body.stateData.paymentMethod.type;
+  const pm = (body.stateData && body.stateData.paymentMethod) || body.paymentMethod;
+  if (pm) {
+    out.paymentMethod = pm.type;
+    if (pm.storedPaymentMethodId) out.storedPaymentMethodId = pm.storedPaymentMethodId;
   }
-  if (body.stateData && body.stateData.details) {
-    out.details = Object.keys(body.stateData.details);
+  const details = (body.stateData && body.stateData.details) || body.details;
+  if (details) out.details = Object.keys(details);
+  if (body.threeDS2RequestData || body.enableStoreDetails !== undefined) {
+    // keep original hints
   }
-  if (body.threeDS2RequestData) {
-    out.threeDS = true;
+  if (
+    body.storePaymentMethod ||
+    body.stateData?.storePaymentMethod ||
+    body.stateData?.paymentMethod?.storePaymentMethod
+  ) {
+    out.storePaymentMethod = true;
   }
+  ['shopperReference', 'recurringProcessingModel', 'shopperInteraction'].forEach((key) => {
+    if (body[key]) out[key] = body[key];
+  });
+  const cws =
+    body.challengeWindowSize || body.authenticationData?.threeDSRequestData?.challengeWindowSize;
+  if (cws) out.challengeWindowSize = cws;
   if (body.redirectResult) {
     out.redirectResult = 'present';
   }
@@ -310,6 +502,15 @@ function addTrafficEntry(endpoint, reqBody) {
     const body = compactResponse(resp);
     line.classList.remove('req-line');
     line.classList.add(ok ? 'res-line' : 'err-line');
+    if (resp && resp.request) {
+      const reqBlock = line.querySelector('.req-block');
+      if (reqBlock) {
+        reqBlock.innerHTML = `
+          <div class="network-block-title">Request → Adyen</div>
+          ${renderJson(compactRequest(resp.request), 0)}
+        `;
+      }
+    }
     line.querySelector('.cl-title').textContent = title + status;
     line.querySelector('.res-block').className = `network-block ${ok ? 'res-block' : 'err-block'}`;
     line.querySelector('.res-block, .err-block').innerHTML = `
@@ -548,6 +749,7 @@ async function buildSessions(cfg) {
     countryCode: cfg.country,
     shopperLocale: cfg.locale,
     returnUrl: window.location.href,
+    enableStoreDetails: cfg.enableStoreDetails,
   };
   const setRes = addTrafficEntry('POST /api/sessions  →  Adyen POST /sessions', reqBody);
   const data = await api('/api/sessions', reqBody);
@@ -586,6 +788,7 @@ async function buildAdvanced(cfg) {
     countryCode: cfg.country,
     shopperLocale: cfg.locale,
     allowedPaymentMethods: cfg.allowed,
+    enableStoreDetails: cfg.enableStoreDetails,
   };
   const setPmRes = addTrafficEntry('POST /api/paymentMethods  →  Adyen POST /paymentMethods', pmReq);
   const pm = await api('/api/paymentMethods', pmReq);
@@ -613,7 +816,7 @@ async function buildAdvanced(cfg) {
         origin: window.location.origin,
       };
       if (cfg.challengeWindowSize) {
-        reqBody.threeDS2RequestData = { deviceChannel: 'browser', notificationURL: window.location.href };
+        reqBody.challengeWindowSize = cfg.challengeWindowSize;
       }
       const setPayRes = addTrafficEntry('POST /api/payments  →  Adyen POST /payments', reqBody);
       const res = await api('/api/payments', reqBody);
@@ -804,27 +1007,32 @@ function setupPaymentPresets() {
   });
 }
 
+function tooltipHtml(key) {
+  const hint = HINTS[key];
+  const extra = HINT_EXTRA[key];
+  if (!hint || !hint[lang]) return '';
+  const heads =
+    lang === 'zh'
+      ? { desc: '说明', fe: '前端 SDK', be: '后端字段' }
+      : { desc: 'What it does', fe: 'Frontend SDK', be: 'Backend field' };
+  const sec = (title, body) =>
+    body ? `<div class="tip-sec"><div class="tip-h">${title}</div><div class="tip-b">${escHtml(body)}</div></div>` : '';
+  return (
+    sec(heads.desc, hint[lang].l) +
+    sec(heads.fe, extra && extra.fe && extra.fe[lang]) +
+    sec(heads.be, extra && extra.be && extra.be[lang])
+  );
+}
+
 function setupEli5Tooltips() {
   const tooltip = $('eli5Tooltip');
   if (!tooltip) return;
-  const details = [
-    'Sessions 适合想快速上线的接入方式。你的后端只需要创建一次 session，之后支付过程中的状态、跳转和部分细节由 Adyen 组件接管。它适合标准 checkout，也方便商户先理解完整支付链路。',
-    'Advanced 适合需要更多控制权的场景。你可以在前端触发 submit，在后端显式调用 paymentMethods、payments 和 details，更容易插入风控、订单校验、日志追踪和自定义错误处理。',
-    'Drop-in 是最完整的预置支付界面。它会根据 merchant 配置、国家、币种和浏览器能力展示多个支付方式，适合演示“商户上线后用户看到的整体支付体验”。',
-    'Single Component 只渲染一个支付方式，例如 Card、PayPal 或 Klarna。它适合逐个排查支付方式，也适合商户已有自己的 checkout 页面，只想把某个 Adyen 组件嵌入进去。',
-    'showPayButton 决定组件是否显示自己的付款按钮。开启时体验更接近开箱即用；关闭时通常需要商户页面自己提供按钮，并调用组件提交逻辑。',
-    'openFirstPaymentMethod 会让第一个支付方式默认展开。适合减少用户点击，也方便测试人员刷新页面后直接看到第一个支付方式的字段状态。',
-    'holderName 会在 Card 里显示持卡人姓名字段。某些商户希望采集更完整的持卡信息，用于订单记录、风控或客服排查。',
-    'enableStoreDetails 会显示保存支付详情的选项。真实生产使用通常还需要 shopperReference 等 shopper 信息配合，这里主要用于观察前端 UI 的变化。',
-    'hideCVC 会隐藏安全码字段。它一般只适合特定存卡、低风险或复用支付方式的测试场景，不建议在普通新卡支付里随意开启。',
-    'billingAddressRequired 会要求用户填写完整账单地址。它常用于风控、发票、地区合规或部分卡组织规则相关的场景。',
-    'challengeWindowSize 控制 3DS 挑战验证窗口尺寸。不同尺寸会影响银行验证页的展示空间，适合演示 3DS 用户体验差异。',
-    '测试卡用于快速复制卡号。点击后不会改变当前组件，只会复制卡号；有效期和 CVC 直接显示在灰字里，方便粘贴到 Adyen 安全输入框。',
-    '金额或币种变化会重新请求可用支付方式。这样可以快速观察不同币种、金额组合下，前端展示的支付方式是否发生变化。',
-  ];
-  document.querySelectorAll('.eli5').forEach((el, index) => {
+  document.querySelectorAll('.eli5').forEach((el) => {
     el.addEventListener('mouseenter', () => {
-      tooltip.textContent = details[index] || el.textContent;
+      const key = el.getAttribute('data-hint');
+      const html = tooltipHtml(key);
+      if (html) tooltip.innerHTML = html;
+      else tooltip.textContent = el.textContent;
       tooltip.classList.remove('hidden');
     });
     el.addEventListener('mousemove', (e) => {

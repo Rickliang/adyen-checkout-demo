@@ -39,12 +39,12 @@
             <input type="radio" name="flow" value="sessions" />
             <span>Sessions flow <em data-i18n="flowSessionsHint">(推荐，后端一次 /sessions)</em></span>
           </label>
-          <div class="eli5">由 Adyen 托管支付流程，后端接入更简单。</div>
+          <div class="eli5" data-hint="flowSessions">由 Adyen 托管支付流程，后端接入更简单。</div>
           <label class="radio">
             <input type="radio" name="flow" value="advanced" checked />
             <span>Advanced flow <em data-i18n="flowAdvancedHint">(手动 /payments + /details)</em></span>
           </label>
-          <div class="eli5">前后端可完全控制，适合复杂支付场景。</div>
+          <div class="eli5" data-hint="flowAdvanced">前后端可完全控制，适合复杂支付场景。</div>
         </fieldset>
 
         <fieldset>
@@ -53,12 +53,12 @@
             <input type="radio" name="component" value="dropin" checked />
             <span>Drop-in <em data-i18n="dropinHint">(全部支付方式)</em></span>
           </label>
-          <div class="eli5">使用预置界面，自动展示可用支付方式。</div>
+          <div class="eli5" data-hint="compDropin">使用预置界面，自动展示可用支付方式。</div>
           <label class="radio">
             <input type="radio" name="component" value="component" />
             <span>Single Component <em data-i18n="cardHint">(单个支付方式组件)</em></span>
           </label>
-          <div class="eli5">只渲染指定支付方式，例如信用卡或 PayPal。</div>
+          <div class="eli5" data-hint="compSingle">只渲染指定支付方式，例如信用卡或 PayPal。</div>
           <label id="componentTypeWrap" class="hidden">
             <span data-i18n="componentType">支付组件</span>
             <select id="componentType">
@@ -83,32 +83,32 @@
               <input type="checkbox" id="showPayButton" checked />
               <span>showPayButton</span>
             </label>
-            <div class="eli5">是否显示组件自带的付款按钮。</div>
+            <div class="eli5" data-hint="showPayButton">是否显示组件自带的付款按钮。</div>
             <label class="check">
-              <input type="checkbox" id="openFirstStored" />
+              <input type="checkbox" id="openFirstStored" checked />
               <span>openFirstPaymentMethod</span>
             </label>
-            <div class="eli5">进入页面后自动展开第一个支付方式。</div>
+            <div class="eli5" data-hint="openFirst">进入页面后自动展开第一个支付方式。</div>
             <label class="check">
               <input type="checkbox" id="hasHolderName" />
               <span>holderName</span>
             </label>
-            <div class="eli5">是否显示持卡人姓名字段。</div>
+            <div class="eli5" data-hint="holderName">是否显示持卡人姓名字段。</div>
             <label class="check">
               <input type="checkbox" id="enableStoreDetails" />
               <span>enableStoreDetails</span>
             </label>
-            <div class="eli5">是否显示“保存支付详情以备下次使用”。</div>
+            <div class="eli5" data-hint="enableStoreDetails">是否显示“保存支付详情以备下次使用”。</div>
             <label class="check">
               <input type="checkbox" id="hideCVC" />
               <span>hideCVC</span>
             </label>
-            <div class="eli5">隐藏卡片背面的安全码字段。</div>
+            <div class="eli5" data-hint="hideCVC">隐藏卡片背面的安全码字段。</div>
             <label class="check">
               <input type="checkbox" id="billingAddressRequired" />
               <span>billingAddressRequired</span>
             </label>
-            <div class="eli5">要求填写完整账单地址。</div>
+            <div class="eli5" data-hint="billingAddressRequired">要求填写完整账单地址。</div>
             <label>
               <span data-i18n="threeDS">3DS challengeWindowSize</span>
               <select id="challengeWindowSize">
@@ -120,7 +120,7 @@
                 <option value="05">05 · fullscreen</option>
               </select>
             </label>
-            <div class="eli5">设置 3DS 验证窗口大小。</div>
+            <div class="eli5" data-hint="challengeWindowSize">设置 3DS 验证窗口大小。</div>
 
             <details class="param-group">
               <summary>Card 常用参数</summary>
@@ -128,17 +128,17 @@
                 <span>brands</span>
                 <input type="text" id="brands" placeholder="visa,mc,amex" />
               </label>
-              <div class="eli5">限制 Card 组件允许展示的卡品牌，留空表示不限制。</div>
+              <div class="eli5" data-hint="brands">限制 Card 组件允许展示的卡品牌，留空表示不限制。</div>
               <label class="check">
                 <input type="checkbox" id="showBrandIcon" checked />
                 <span>showBrandIcon</span>
               </label>
-              <div class="eli5">是否在卡号输入框右侧显示识别到的卡品牌图标。</div>
+              <div class="eli5" data-hint="showBrandIcon">是否在卡号输入框右侧显示识别到的卡品牌图标。</div>
               <label class="check">
                 <input type="checkbox" id="enableScanning" />
                 <span>enableScanning</span>
               </label>
-              <div class="eli5">在支持的移动设备上启用扫码/扫描卡片能力。</div>
+              <div class="eli5" data-hint="enableScanning">在支持的移动设备上启用扫码/扫描卡片能力。</div>
               <label>
                 <span>billingAddressMode</span>
                 <select id="billingAddressMode">
@@ -147,7 +147,7 @@
                   <option value="full">full</option>
                 </select>
               </label>
-              <div class="eli5">控制账单地址采集模式，full 会展示更完整地址字段。</div>
+              <div class="eli5" data-hint="billingAddressMode">控制账单地址采集模式，full 会展示更完整地址字段。</div>
             </details>
 
             <details class="param-group">
@@ -156,12 +156,12 @@
                 <input type="checkbox" id="showRemovePaymentMethodButton" />
                 <span>showRemovePaymentMethodButton</span>
               </label>
-              <div class="eli5">在存在 stored payment methods 时显示删除按钮。</div>
+              <div class="eli5" data-hint="showRemovePaymentMethodButton">在存在 stored payment methods 时显示删除按钮。</div>
               <label class="check">
                 <input type="checkbox" id="showStoredPaymentMethods" checked />
                 <span>showStoredPaymentMethods</span>
               </label>
-              <div class="eli5">是否展示用户已保存的支付方式。</div>
+              <div class="eli5" data-hint="showStoredPaymentMethods">是否展示用户已保存的支付方式。</div>
             </details>
 
             <details class="param-group">
@@ -176,7 +176,7 @@
                   <option value="checkout">checkout</option>
                 </select>
               </label>
-              <div class="eli5">控制钱包按钮文案/样式，适用于 Apple Pay 或 Google Pay 测试。</div>
+              <div class="eli5" data-hint="walletButtonType">控制钱包按钮文案/样式，适用于 Apple Pay 或 Google Pay 测试。</div>
               <label>
                 <span>buttonColor</span>
                 <select id="walletButtonColor">
@@ -186,7 +186,7 @@
                   <option value="white-with-line">white-with-line</option>
                 </select>
               </label>
-              <div class="eli5">控制钱包按钮颜色，不同钱包支持值可能略有差异。</div>
+              <div class="eli5" data-hint="walletButtonColor">控制钱包按钮颜色，不同钱包支持值可能略有差异。</div>
             </details>
           </div>
         </details>
@@ -196,7 +196,7 @@
         <fieldset class="preset-panel">
           <legend>测试卡</legend>
           <div class="preset-grid" id="presetGrid"></div>
-          <div class="eli5">点击后复制卡号，不改变当前组件。</div>
+          <div class="eli5" data-hint="presetCards">点击后复制卡号，不改变当前组件。</div>
         </fieldset>
       </section>
 
@@ -228,7 +228,7 @@
                 </select>
               </label>
             </div>
-            <div class="eli5">修改金额和币种后，会立即更新购物车总计。</div>
+            <div class="eli5" data-hint="amountCurrency">修改金额和币种后，会立即更新购物车总计。</div>
           </div>
 
           <div class="cart-line total">

@@ -84,7 +84,7 @@ body {
 
 .layout {
   display: grid;
-  grid-template-columns: var(--cfg-width, 390px) minmax(320px, 1fr) var(--dev-width, 540px);
+  grid-template-columns: var(--cfg-width, 470px) minmax(320px, 1fr) var(--dev-width, 540px);
   gap: 16px;
   padding: 16px;
   align-items: start;
@@ -161,6 +161,27 @@ body {
   display: block;
   margin-bottom: 6px;
   color: #a9e5c2;
+}
+
+.eli5-tooltip .tip-sec {
+  padding: 6px 0;
+}
+
+.eli5-tooltip .tip-sec + .tip-sec {
+  border-top: 1px solid #3a4d68;
+}
+
+.eli5-tooltip .tip-h {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #a9e5c2;
+  margin-bottom: 3px;
+}
+
+.eli5-tooltip .tip-b {
+  color: #eef5ff;
 }
 
 label:not(.radio):not(.check) + .eli5 {

@@ -25,6 +25,8 @@ const app = express();
 app.use(express.json());
 app.use(express.static(join(__dirname, 'public')));
 
+const DEMO_SHOPPER_REFERENCE = 'adyen-checkout-demo-shopper';
+
 function assertConfig() {
   const missing = [];
   if (!ADYEN_API_KEY || ADYEN_API_KEY === 'YOUR_TEST_API_KEY') missing.push('ADYEN_API_KEY');
@@ -78,7 +80,7 @@ app.post('/api/sessions', async (req, res) => {
   const missing = assertConfig();
   if (missing.length) return res.status(400).json({ error: 'Missing credentials', missing });
 
-  const { amount, currency, countryCode, shopperLocale, returnUrl } = req.body;
+  const { amount, currency, countryCode, shopperLocale, returnUrl, enableStoreDetails } = req.body;
   const body = {
     merchantAccount: ADYEN_MERCHANT_ACCOUNT,
     amount: { value: amount, currency },
@@ -88,6 +90,11 @@ app.post('/api/sessions', async (req, res) => {
     returnUrl: returnUrl || 'http://localhost:' + PORT,
     channel: 'Web',
   };
+  if (enableStoreDetails) {
+    body.shopperReference = DEMO_SHOPPER_REFERENCE;
+    body.recurringProcessingModel = 'CardOnFile';
+    body.shopperInteraction = 'Ecommerce';
+  }
   try {
     const result = await adyenCall('/sessions', body);
     res.status(result.ok ? 200 : result.status).json(result);
@@ -101,7 +108,7 @@ app.post('/api/paymentMethods', async (req, res) => {
   const missing = assertConfig();
   if (missing.length) return res.status(400).json({ error: 'Missing credentials', missing });
 
-  const { amount, currency, countryCode, shopperLocale, allowedPaymentMethods } = req.body;
+  const { amount, currency, countryCode, shopperLocale, allowedPaymentMethods, enableStoreDetails } = req.body;
   const body = {
     merchantAccount: ADYEN_MERCHANT_ACCOUNT,
     amount: { value: amount, currency },
@@ -111,6 +118,9 @@ app.post('/api/paymentMethods', async (req, res) => {
   };
   if (Array.isArray(allowedPaymentMethods) && allowedPaymentMethods.length) {
     body.allowedPaymentMethods = allowedPaymentMethods;
+  }
+  if (enableStoreDetails) {
+    body.shopperReference = DEMO_SHOPPER_REFERENCE;
   }
   try {
     const result = await adyenCall('/paymentMethods', body);
@@ -124,7 +134,11 @@ app.post('/api/payments', async (req, res) => {
   const missing = assertConfig();
   if (missing.length) return res.status(400).json({ error: 'Missing credentials', missing });
 
-  const { stateData, amount, currency, countryCode, returnUrl, origin } = req.body;
+  const { stateData, amount, currency, countryCode, returnUrl, origin, challengeWindowSize } = req.body;
+  const threeDSRequestData = { nativeThreeDS: 'preferred' };
+  if (challengeWindowSize) {
+    threeDSRequestData.challengeWindowSize = challengeWindowSize;
+  }
   const body = {
     ...stateData,
     merchantAccount: ADYEN_MERCHANT_ACCOUNT,
@@ -135,8 +149,17 @@ app.post('/api/payments', async (req, res) => {
     returnUrl: returnUrl || 'http://localhost:' + PORT,
     origin: origin || 'http://localhost:' + PORT,
     additionalData: { allow3DS2: true },
-    authenticationData: { threeDSRequestData: { nativeThreeDS: 'preferred' } },
+    authenticationData: { threeDSRequestData },
   };
+  const isStoringNewMethod = Boolean(stateData?.storePaymentMethod || stateData?.paymentMethod?.storePaymentMethod);
+  const isUsingStoredMethod = Boolean(
+    stateData?.paymentMethod?.storedPaymentMethodId || stateData?.paymentMethod?.recurringDetailReference
+  );
+  if (isStoringNewMethod || isUsingStoredMethod) {
+    body.shopperReference = DEMO_SHOPPER_REFERENCE;
+    body.recurringProcessingModel = 'CardOnFile';
+    body.shopperInteraction = isUsingStoredMethod ? 'ContAuth' : 'Ecommerce';
+  }
   try {
     const result = await adyenCall('/payments', body);
     res.status(result.ok ? 200 : result.status).json(result);
