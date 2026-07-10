@@ -1034,6 +1034,14 @@ select {
   outline: none;
   padding: 0;
   width: auto;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cw-select option {
+  font-size: 14px;
 }
 
 /* ---- copy toast ---- */

@@ -283,6 +283,20 @@
       </section>
     </main>
 
+    <!-- Fixed country selector (bottom-right) -->
+    <div class="country-widget" id="countryWidget">
+      <span class="cw-flag" id="cwFlag">🇳🇱</span>
+      <select class="cw-select" id="cwSelect" title="Country / 国家">
+        <option value="NL">🇳🇱 Netherlands</option>
+        <option value="US">🇺🇸 United States</option>
+        <option value="GB">🇬🇧 United Kingdom</option>
+        <option value="DE">🇩🇪 Germany</option>
+        <option value="CN">🇨🇳 China</option>
+        <option value="BR">🇧🇷 Brazil</option>
+        <option value="AU">🇦🇺 Australia</option>
+      </select>
+    </div>
+
     <!-- Hidden inputs for backward compatibility with JS code -->
     <input type="hidden" id="country" value="NL" />
     <input type="hidden" id="locale" value="en-US" />

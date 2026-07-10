@@ -1046,36 +1046,33 @@ function setupEli5Tooltips() {
 /* ---------- country widget ---------- */
 function setupCountryWidget() {
   const mainSel = $('country');
-  mainSel.innerHTML = '';
-  COUNTRIES.forEach((c) => {
-    const opt = document.createElement('option');
-    opt.value = c.code;
-    opt.textContent = `${c.flag}  ${c.code} – ${c.name}`;
-    mainSel.appendChild(opt);
-  });
   mainSel.value = COUNTRIES[0].code;
 
   const cwSel = $('cwSelect');
-  COUNTRIES.forEach((c) => {
-    const opt = document.createElement('option');
-    opt.value = c.code;
-    opt.textContent = `${c.flag}  ${c.name}`;
-    cwSel.appendChild(opt);
-  });
-  cwSel.value = mainSel.value;
+  const cwFlag = $('cwFlag');
+
+  function updateFlag(code) {
+    const c = COUNTRIES.find((x) => x.code === code);
+    if (cwFlag && c) cwFlag.textContent = c.flag;
+  }
 
   cwSel.addEventListener('change', () => {
-    mainSel.value = cwSel.value;
+    const code = cwSel.value;
+    mainSel.value = code;
+    updateFlag(code);
+    // sync locale roughly: NL → nl-NL, US → en-US, GB → en-GB, DE → de-DE, CN → zh-CN, BR → pt-BR, AU → en-AU
+    const localeMap = { NL: 'nl-NL', US: 'en-US', GB: 'en-GB', DE: 'de-DE', CN: 'zh-CN', BR: 'pt-BR', AU: 'en-AU' };
+    $('locale').value = localeMap[code] || 'en-US';
     build();
   });
-  mainSel.addEventListener('change', () => {
-    cwSel.value = mainSel.value;
-  });
+
+  // init flag
+  updateFlag(cwSel.value || COUNTRIES[0].code);
 }
 
 /* ---------- init ---------- */
 async function init() {
-  // setupCountryWidget(); // Removed
+  setupCountryWidget();
   setupResizer();
   applyI18n();
   updateCart();
