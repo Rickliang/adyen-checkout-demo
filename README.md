@@ -1,5 +1,7 @@
 # Adyen Checkout Demo
 
+![screenshot](docs/screenshot.png)
+
 一个超轻量的 Adyen 测试支付演示。你可以切换 Sessions / Advanced、Drop-in / 单组件，并在开发者面板查看请求、响应和事件。
 
 A tiny Adyen test checkout demo. Switch Sessions / Advanced, Drop-in / single components, and inspect requests, responses, and events in the developer panel.
