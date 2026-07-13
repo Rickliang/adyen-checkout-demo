@@ -12,14 +12,13 @@ The app reads Adyen credentials with automatic fallback mechanism:
 | `ADYEN_MERCHANT_ACCOUNT` | Merchant account identifier | Adyen Customer Area |
 | `ADYEN_CLIENT_KEY` | Browser SDK authentication | Adyen Customer Area > Developers > API credentials |
 
-### Fixed Values
-
-These are hardcoded (no need to set):
+### Fixed Values (Hardcoded - No Need to Set)
 
 | Variable | Value | Reason |
 |----------|-------|--------|
-| `ADYEN_ENVIRONMENT` | `test` | Always use test environment in this demo |
+| `ADYEN_ENVIRONMENT` | `test` | Always use test environment |
 | `ADYEN_API_VERSION` | `v71` | Fixed API version for consistency |
+| `PORT` | `8080` | Default port for local development |
 
 ## Configuration Precedence
 
