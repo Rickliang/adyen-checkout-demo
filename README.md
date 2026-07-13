@@ -1,12 +1,12 @@
 # Adyen Checkout Demo
 
+[中文版本](./README.zh.md)
+
 ![screenshot](docs/screenshot.png)
 
-一个超轻量的 Adyen 测试支付演示。你可以切换 Sessions / Advanced、Drop-in / 单组件，并在开发者面板查看请求、响应和事件。
+A lightweight Adyen test-environment checkout demo. Switch between Sessions / Advanced flows, Drop-in / single components, and inspect requests, responses, and events in the developer panel.
 
-A tiny Adyen test checkout demo. Switch Sessions / Advanced, Drop-in / single components, and inspect requests, responses, and events in the developer panel.
-
-## 快速开始 / Quick start
+## Quick Start
 
 ```bash
 npm install
@@ -14,22 +14,20 @@ cp .env.example .env
 npm start
 ```
 
-打开 / Open:
+Open your browser at:
 
 ```text
 http://localhost:8080
 ```
 
-## 配置 / Config
+## Configuration
 
-### 环境 / Environment
+### Environment
 
-- **默认环境 / Default environment**: `test` (Adyen test-environment)
-- **API 版本 / API version**: `v71`
+- **Default environment**: `test` (Adyen test-environment)
+- **API version**: `v71`
 
-### 本地开发 / Local Development
-
-在 `.env` 填入你的 Adyen test credentials:
+### Local Development
 
 Fill `.env` with your Adyen test credentials:
 
@@ -39,22 +37,56 @@ ADYEN_MERCHANT_ACCOUNT=YOUR_MERCHANT_ACCOUNT
 ADYEN_CLIENT_KEY=test_YOUR_CLIENT_KEY
 ```
 
-确保 Client Key 的 "Allowed origins" 包含 `http://localhost:8080`。
-
 Make sure the Client Key's "Allowed origins" includes `http://localhost:8080`.
 
-### Netlify 部署 / Netlify Deployment
-
-在 Netlify Site settings > Build & deploy > Environment 中设置以下环境变量：
+### Netlify Deployment
 
 Set these environment variables in Netlify Site settings > Build & deploy > Environment:
 
-| 变量名 / Variable | 说明 / Description |
-|---------|---------|
-| `ADYEN_API_KEY` | 从 Adyen Customer Area 获取 / Get from Adyen Customer Area |
-| `ADYEN_MERCHANT_ACCOUNT` | 商户账号 / Merchant account name |
-| `ADYEN_CLIENT_KEY` | 客户端密钥（需添加 Netlify URL 到允许域名） / Client Key (add Netlify URL to allowed origins) |
-
-部署后，将 Netlify 网站 URL（如 `https://yourapp.netlify.app`）添加到 Adyen Client Key 的 "Allowed origins" 中。
+| Variable | Description |
+|----------|-------------|
+| `ADYEN_API_KEY` | Get from Adyen Customer Area |
+| `ADYEN_MERCHANT_ACCOUNT` | Merchant account name |
+| `ADYEN_CLIENT_KEY` | Client Key (add Netlify URL to allowed origins) |
 
 After deployment, add your Netlify site URL (e.g., `https://yourapp.netlify.app`) to the Client Key's "Allowed origins" in Adyen.
+
+## Features
+
+- **Dual Integration Flows**: Sessions (recommended) vs Advanced
+- **Component Types**: Drop-in (all-in-one) vs single components (card, wallet, etc.)
+- **Stored Payment Methods**: Save and reuse cards with delete functionality
+- **Payment Line Items**: Full support for Klarna, Afterpay, Ratepay
+- **Developer Tools**: Network/Events tabs, merged request/response logs, colored indicators
+- **Multi-Language**: Chinese/English UI toggle
+- **Test Card Presets**: Quick copy-to-clipboard for testing
+- **3DS Configuration**: Challenge window size selector
+- **Country Selector**: Fixed widget for testing different regions
+
+## Project Structure
+
+```
+.
+├── public/                      # Frontend (static assets)
+│   ├── index.html              # HTML layout
+│   ├── app.js                  # Frontend logic & SDK integration
+│   └── styles.css              # Styling
+├── netlify/functions/          # Netlify Functions (serverless backend)
+│   ├── api.js                  # Unified API router
+│   ├── shared.js               # Adyen API utilities
+│   └── config.js, sessions.js, etc.  # Individual endpoint functions
+├── server.js                   # Express server (local development)
+├── .env.example                # Environment template
+├── netlify.toml                # Netlify build config
+└── README.md, README.zh.md     # Documentation
+```
+
+## Local Development vs Netlify
+
+**Local**: `npm start` runs `server.js` (Express backend on port 8080)
+
+**Netlify**: Frontend served from `public/`, backend via Netlify Functions at `/.netlify/functions/api`
+
+## Repository
+
+[https://github.com/Rickliang/adyen-checkout-demo](https://github.com/Rickliang/adyen-checkout-demo)
