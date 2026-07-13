@@ -22,14 +22,22 @@ http://localhost:8080
 
 ## Configuration
 
+For detailed setup instructions, see [CONFIGURATION.md](./CONFIGURATION.md).
+
 ### Environment
 
 - **Default environment**: `test` (Adyen test-environment)
 - **API version**: `v71`
 
-### Local Development
+### Quick Start: Local Development
 
-Fill `.env` with your Adyen test credentials:
+**Option 1: Using `.env` file (recommended)**
+
+```bash
+cp .env.example .env
+```
+
+Then fill `.env` with your Adyen test credentials:
 
 ```text
 ADYEN_API_KEY=YOUR_TEST_API_KEY
@@ -37,7 +45,20 @@ ADYEN_MERCHANT_ACCOUNT=YOUR_MERCHANT_ACCOUNT
 ADYEN_CLIENT_KEY=test_YOUR_CLIENT_KEY
 ```
 
-Make sure the Client Key's "Allowed origins" includes `http://localhost:8080`.
+**Option 2: Using environment variables**
+
+Set environment variables in your shell:
+
+```bash
+export ADYEN_API_KEY=YOUR_TEST_API_KEY
+export ADYEN_MERCHANT_ACCOUNT=YOUR_MERCHANT_ACCOUNT
+export ADYEN_CLIENT_KEY=test_YOUR_CLIENT_KEY
+npm start
+```
+
+The app will automatically read credentials from environment variables as a fallback.
+
+**Important**: Make sure the Client Key's "Allowed origins" includes `http://localhost:8080`.
 
 ### Netlify Deployment
 

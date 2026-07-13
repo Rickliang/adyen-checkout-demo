@@ -22,14 +22,22 @@ http://localhost:8080
 
 ## 配置
 
+详细设置说明请参考 [CONFIGURATION.md](./CONFIGURATION.md)。
+
 ### 环境
 
 - **默认环境**：`test`（Adyen 测试环境）
 - **API 版本**：`v71`
 
-### 本地开发
+### 快速开始：本地开发
 
-在 `.env` 中填入你的 Adyen 测试凭证：
+**方式 1：使用 `.env` 文件（推荐）**
+
+```bash
+cp .env.example .env
+```
+
+然后在 `.env` 中填入你的 Adyen 测试凭证：
 
 ```text
 ADYEN_API_KEY=YOUR_TEST_API_KEY
@@ -37,7 +45,20 @@ ADYEN_MERCHANT_ACCOUNT=YOUR_MERCHANT_ACCOUNT
 ADYEN_CLIENT_KEY=test_YOUR_CLIENT_KEY
 ```
 
-确保 Client Key 的 "Allowed origins" 包含 `http://localhost:8080`。
+**方式 2：使用环境变量**
+
+在 shell 中设置环境变量：
+
+```bash
+export ADYEN_API_KEY=YOUR_TEST_API_KEY
+export ADYEN_MERCHANT_ACCOUNT=YOUR_MERCHANT_ACCOUNT
+export ADYEN_CLIENT_KEY=test_YOUR_CLIENT_KEY
+npm start
+```
+
+应用会自动从环境变量读取凭证作为 fallback。
+
+**重要**：确保 Client Key 的 "Allowed origins" 包含 `http://localhost:8080`。
 
 ### Netlify 部署
 
