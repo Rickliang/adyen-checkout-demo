@@ -181,6 +181,57 @@ app.post('/api/payments/details', async (req, res) => {
   }
 });
 
+// --- Stored payment methods management ---
+app.post('/api/storedPaymentMethods/disable', async (req, res) => {
+  const missing = assertConfig();
+  if (missing.length) return res.status(400).json({ error: 'Missing credentials', missing });
+
+  const { storedPaymentMethodId, recurringDetailReference } = req.body;
+  const id = storedPaymentMethodId || recurringDetailReference;
+  
+  if (!id) {
+    return res.status(400).json({ 
+      error: 'storedPaymentMethodId or recurringDetailReference is required' 
+    });
+  }
+
+  // Adyen v71+ uses DELETE on /storedPaymentMethods/{id}
+  // Both shopperReference and merchantAccount must be query parameters
+  const urlObj = new URL(`${CHECKOUT_BASE}/${ADYEN_API_VERSION}/storedPaymentMethods/${id}`);
+  urlObj.searchParams.append('shopperReference', DEMO_SHOPPER_REFERENCE);
+  urlObj.searchParams.append('merchantAccount', ADYEN_MERCHANT_ACCOUNT);
+  
+  try {
+    const response = await fetch(urlObj.toString(), {
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json',
+        'x-API-key': ADYEN_API_KEY,
+      },
+    });
+
+    const text = await response.text();
+    let json;
+    try {
+      json = text ? JSON.parse(text) : {};
+    } catch {
+      json = { raw: text };
+    }
+
+    const result = {
+      ok: response.ok,
+      status: response.status,
+      url: urlObj.toString(),
+      request: { storedPaymentMethodId: id },
+      response: json,
+    };
+
+    res.status(response.ok ? 200 : response.status).json(result);
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
+});
+
 app.get('*', (_req, res) => res.sendFile(join(__dirname, 'public', 'index.html')));
 
 app.listen(PORT, () => {

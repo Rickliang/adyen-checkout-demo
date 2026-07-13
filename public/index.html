@@ -95,7 +95,7 @@
             </label>
             <div class="eli5" data-hint="holderName">是否显示持卡人姓名字段。</div>
             <label class="check">
-              <input type="checkbox" id="enableStoreDetails" />
+              <input type="checkbox" id="enableStoreDetails" checked />
               <span>enableStoreDetails</span>
             </label>
             <div class="eli5" data-hint="enableStoreDetails">是否显示“保存支付详情以备下次使用”。</div>
@@ -153,7 +153,7 @@
             <details class="param-group">
               <summary>Drop-in 常用参数</summary>
               <label class="check">
-                <input type="checkbox" id="showRemovePaymentMethodButton" />
+                <input type="checkbox" id="showRemovePaymentMethodButton" checked />
                 <span>showRemovePaymentMethodButton</span>
               </label>
               <div class="eli5" data-hint="showRemovePaymentMethodButton">在存在 stored payment methods 时显示删除按钮。</div>
@@ -285,7 +285,6 @@
 
     <!-- Fixed country selector (bottom-right) -->
     <div class="country-widget" id="countryWidget">
-      <span class="cw-flag" id="cwFlag">🇳🇱</span>
       <select class="cw-select" id="cwSelect" title="Country / 国家">
         <option value="NL">🇳🇱 Netherlands</option>
         <option value="US">🇺🇸 United States</option>

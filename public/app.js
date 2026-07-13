@@ -240,8 +240,8 @@ const HINT_EXTRA = {
     be: { zh: '影响 billingAddress 采集的字段数量。', en: 'Affects how many billingAddress fields are collected.' },
   },
   showRemovePaymentMethodButton: {
-    fe: { zh: 'dropin 的 showRemovePaymentMethodButton。', en: 'dropin showRemovePaymentMethodButton.' },
-    be: { zh: '删除动作对应 disable stored payment method 接口（本 demo 未实现）。', en: 'Removal maps to the disable stored payment method API (not implemented here).' },
+    fe: { zh: 'dropin 的 showRemovePaymentMethodButton，触发 onDisableStoredPaymentMethod 回调。', en: 'dropin showRemovePaymentMethodButton, triggers onDisableStoredPaymentMethod callback.' },
+    be: { zh: 'DELETE /storedPaymentMethods/{id} 禁用已保存的支付方式，成功后自动刷新支付方式列表。', en: 'DELETE /storedPaymentMethods/{id} disables the stored payment method, then auto-refreshes the payment methods list.' },
   },
   showStoredPaymentMethods: {
     fe: { zh: 'dropin 的 showStoredPaymentMethods。', en: 'dropin showStoredPaymentMethods.' },
@@ -712,12 +712,32 @@ function paymentMethodsConfiguration(cfg) {
 function mountComponent(checkout, cfg) {
   const container = $('payment-container');
   if (cfg.component === 'dropin') {
-    currentComponent = checkout.create('dropin', {
+    const dropinOpts = {
       showPayButton: cfg.showPayButton,
       openFirstPaymentMethod: cfg.openFirstStored,
       showRemovePaymentMethodButton: cfg.showRemovePaymentMethodButton,
       showStoredPaymentMethods: cfg.showStoredPaymentMethods,
-    }).mount(container);
+    };
+    if (cfg.showRemovePaymentMethodButton) {
+      dropinOpts.onDisableStoredPaymentMethod = (storedPaymentMethodId, resolve, reject) => {
+        addEvent('onDisableStoredPaymentMethod', { storedPaymentMethodId });
+        const reqBody = { storedPaymentMethodId };
+        const setRes = addTrafficEntry('POST /api/storedPaymentMethods/disable', reqBody);
+        api('/api/storedPaymentMethods/disable', reqBody).then((res) => {
+          setRes(res);
+          if (res.ok !== false) {
+            resolve();
+            setTimeout(() => build(), 500);
+          } else {
+            reject(new Error(res.response?.message || 'Failed to disable stored payment method'));
+          }
+        }).catch((err) => {
+          addEvent('disableStoredPaymentMethodError', { error: String(err) });
+          reject(err);
+        });
+      };
+    }
+    currentComponent = checkout.create('dropin', dropinOpts).mount(container);
   } else {
     const type = cfg.componentType;
     const opts = { showPayButton: cfg.showPayButton };
@@ -1049,25 +1069,15 @@ function setupCountryWidget() {
   mainSel.value = COUNTRIES[0].code;
 
   const cwSel = $('cwSelect');
-  const cwFlag = $('cwFlag');
-
-  function updateFlag(code) {
-    const c = COUNTRIES.find((x) => x.code === code);
-    if (cwFlag && c) cwFlag.textContent = c.flag;
-  }
 
   cwSel.addEventListener('change', () => {
     const code = cwSel.value;
     mainSel.value = code;
-    updateFlag(code);
     // sync locale roughly: NL → nl-NL, US → en-US, GB → en-GB, DE → de-DE, CN → zh-CN, BR → pt-BR, AU → en-AU
     const localeMap = { NL: 'nl-NL', US: 'en-US', GB: 'en-GB', DE: 'de-DE', CN: 'zh-CN', BR: 'pt-BR', AU: 'en-AU' };
     $('locale').value = localeMap[code] || 'en-US';
     build();
   });
-
-  // init flag
-  updateFlag(cwSel.value || COUNTRIES[0].code);
 }
 
 /* ---------- init ---------- */

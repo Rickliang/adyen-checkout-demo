@@ -1015,14 +1015,6 @@ select {
   border-radius: 12px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.14);
   padding: 8px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cw-flag {
-  font-size: 24px;
-  line-height: 1;
 }
 
 .cw-select {
@@ -1034,7 +1026,7 @@ select {
   outline: none;
   padding: 0;
   width: auto;
-  max-width: 140px;
+  max-width: 160px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
