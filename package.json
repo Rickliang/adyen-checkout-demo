@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "restart": "pkill -f 'node server.js' || true; npm start"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

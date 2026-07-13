@@ -2,8 +2,12 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import fs from 'fs';
 
-dotenv.config();
+// Load .env file if it exists, otherwise use system environment variables
+if (fs.existsSync('.env')) {
+  dotenv.config();
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
