@@ -11,15 +11,13 @@ const {
   ADYEN_API_KEY,
   ADYEN_MERCHANT_ACCOUNT,
   ADYEN_CLIENT_KEY,
-  ADYEN_ENVIRONMENT = 'test',
-  ADYEN_API_VERSION = 'v71',
   PORT = 8080,
 } = process.env;
 
-const CHECKOUT_BASE =
-  ADYEN_ENVIRONMENT === 'live'
-    ? 'https://checkout-live.adyen.com'
-    : 'https://checkout-test.adyen.com';
+// Default: test environment (v71 API version)
+const ADYEN_ENVIRONMENT = 'test';
+const ADYEN_API_VERSION = 'v71';
+const CHECKOUT_BASE = 'https://checkout-test.adyen.com';
 
 const app = express();
 app.use(express.json());
@@ -134,7 +132,7 @@ app.post('/api/payments', async (req, res) => {
   const missing = assertConfig();
   if (missing.length) return res.status(400).json({ error: 'Missing credentials', missing });
 
-  const { stateData, amount, currency, countryCode, returnUrl, origin, challengeWindowSize } = req.body;
+  const { stateData, amount, currency, countryCode, returnUrl, origin, challengeWindowSize, lineItems } = req.body;
   const threeDSRequestData = { nativeThreeDS: 'preferred' };
   if (challengeWindowSize) {
     threeDSRequestData.challengeWindowSize = challengeWindowSize;
@@ -151,6 +149,9 @@ app.post('/api/payments', async (req, res) => {
     additionalData: { allow3DS2: true },
     authenticationData: { threeDSRequestData },
   };
+  if (lineItems && lineItems.length > 0) {
+    body.lineItems = lineItems;
+  }
   const isStoringNewMethod = Boolean(stateData?.storePaymentMethod || stateData?.paymentMethod?.storePaymentMethod);
   const isUsingStoredMethod = Boolean(
     stateData?.paymentMethod?.storedPaymentMethodId || stateData?.paymentMethod?.recurringDetailReference

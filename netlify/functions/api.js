@@ -6,7 +6,7 @@ async function handleConfig(event) {
     statusCode: 200,
     body: JSON.stringify({
       clientKey: process.env.ADYEN_CLIENT_KEY,
-      environment: process.env.ADYEN_ENVIRONMENT || 'test',
+      environment: 'test',
       merchantAccount: ADYEN_MERCHANT_ACCOUNT,
       configured: missing.length === 0,
       missing,

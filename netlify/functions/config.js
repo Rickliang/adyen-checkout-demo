@@ -7,7 +7,7 @@ exports.handler = async (event, context) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       clientKey: process.env.ADYEN_CLIENT_KEY,
-      environment: process.env.ADYEN_ENVIRONMENT || 'test',
+      environment: 'test',
       merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
       configured: missing.length === 0,
       missing,

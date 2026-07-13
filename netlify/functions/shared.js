@@ -1,10 +1,9 @@
-const CHECKOUT_BASE = process.env.ADYEN_ENVIRONMENT === 'live'
-  ? 'https://checkout-live.adyen.com'
-  : 'https://checkout-test.adyen.com';
+// Default: test environment (v71 API version)
+const CHECKOUT_BASE = 'https://checkout-test.adyen.com';
+const ADYEN_API_VERSION = 'v71';
 
 const ADYEN_API_KEY = process.env.ADYEN_API_KEY;
 const ADYEN_MERCHANT_ACCOUNT = process.env.ADYEN_MERCHANT_ACCOUNT;
-const ADYEN_API_VERSION = process.env.ADYEN_API_VERSION || 'v71';
 const DEMO_SHOPPER_REFERENCE = 'adyen-checkout-demo-shopper';
 
 function reference() {
