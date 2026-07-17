@@ -255,6 +255,10 @@ const HINT_EXTRA = {
     fe: { zh: 'paywithgoogle / applepay 的 buttonColor。', en: 'paywithgoogle / applepay buttonColor.' },
     be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
   },
+  lineItems: {
+    fe: { zh: 'Klarna 专用。在 paymentMethodsConfiguration.klarna 中传递。', en: 'Klarna only. Pass in paymentMethodsConfiguration.klarna.' },
+    be: { zh: 'lineItems 数组必须提供，每项需要 description、quantity、amountIncludingTax。amountIncludingTax 单位为最小货币单位（EUR 则为分）。', en: 'lineItems array required. Each item needs description, quantity, amountIncludingTax (in minor units, e.g. cents for EUR).' },
+  },
   presetCards: {
     fe: { zh: '仅复制卡号到剪贴板，不改动组件配置。', en: 'Only copies the number to clipboard; no component config change.' },
     be: { zh: '无后端字段。', en: 'No backend field.' },
@@ -621,6 +625,15 @@ function scheduleBuild(delay = 350) {
 function readControls() {
   const allowedRaw = $('allowed') ? $('allowed').value.trim() : '';
   const brandsRaw = $('brands') ? $('brands').value.trim() : '';
+  const lineItemsRaw = $('lineItems') ? $('lineItems').value.trim() : '';
+  let lineItems = [];
+  if (lineItemsRaw) {
+    try {
+      lineItems = JSON.parse(lineItemsRaw);
+    } catch (e) {
+      console.warn('Invalid lineItems JSON:', e.message);
+    }
+  }
   return {
     flow: document.querySelector('input[name="flow"]:checked').value,
     component: document.querySelector('input[name="component"]:checked').value,
@@ -644,6 +657,7 @@ function readControls() {
     walletButtonType: $('walletButtonType') ? $('walletButtonType').value : '',
     walletButtonColor: $('walletButtonColor') ? $('walletButtonColor').value : '',
     challengeWindowSize: $('challengeWindowSize').value,
+    lineItems,
     allowed: allowedRaw ? allowedRaw.split(',').map((s) => s.trim()).filter(Boolean) : [],
   };
 }
@@ -702,11 +716,17 @@ function walletUiConfig(cfg) {
 }
 
 function paymentMethodsConfiguration(cfg) {
-  return {
+  const config = {
     card: cardUiConfig(cfg),
     paywithgoogle: walletUiConfig(cfg),
     applepay: walletUiConfig(cfg),
   };
+  if (cfg.lineItems && cfg.lineItems.length > 0) {
+    config.klarna = { lineItems: cfg.lineItems };
+    config.afterpay_default = { lineItems: cfg.lineItems };
+    config.ratepay = { lineItems: cfg.lineItems };
+  }
+  return config;
 }
 
 function mountComponent(checkout, cfg) {
@@ -837,6 +857,9 @@ async function buildAdvanced(cfg) {
       };
       if (cfg.challengeWindowSize) {
         reqBody.challengeWindowSize = cfg.challengeWindowSize;
+      }
+      if (cfg.lineItems && cfg.lineItems.length > 0) {
+        reqBody.lineItems = cfg.lineItems;
       }
       const setPayRes = addTrafficEntry('POST /api/payments  →  Adyen POST /payments', reqBody);
       const res = await api('/api/payments', reqBody);

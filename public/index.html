@@ -165,6 +165,15 @@
             </details>
 
             <details class="param-group">
+              <summary>Klarna / Afterpay / Ratepay 常用参数</summary>
+              <label>
+                <span>lineItems (JSON) ⚠️</span>
+                <textarea id="lineItems" placeholder="[{&quot;description&quot;:&quot;Item&quot;,&quot;quantity&quot;:1,&quot;amountIncludingTax&quot;:1000}]" style="height: 60px; font-size: 12px;">[{"description":"Demo Item","quantity":1,"amountIncludingTax":1000}]</textarea>
+              </label>
+              <div class="eli5" data-hint="lineItems">⚠️ Klarna/Afterpay/Ratepay 必需。购物车商品列表（JSON）。每项需: description、quantity、amountIncludingTax（最小货币单位，EUR为分）。</div>
+            </details>
+
+            <details class="param-group">
               <summary>Apple Pay / Google Pay 常用参数</summary>
               <label>
                 <span>buttonType</span>
