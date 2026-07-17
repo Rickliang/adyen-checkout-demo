@@ -1,4 +1,4 @@
-const { adyenCall, assertConfig, ADYEN_MERCHANT_ACCOUNT, DEMO_SHOPPER_REFERENCE, reference } = require('./shared');
+const { adyenCall, assertConfig, ADYEN_MERCHANT_ACCOUNT, DEMO_SHOPPER_REFERENCE, reference } = require('./shared.cjs');
 
 exports.handler = async (event, context) => {
   const missing = assertConfig();

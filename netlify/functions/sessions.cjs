@@ -1,4 +1,4 @@
-const { adyenCall, assertConfig, ADYEN_MERCHANT_ACCOUNT, DEMO_SHOPPER_REFERENCE } = require('./shared');
+const { adyenCall, assertConfig, ADYEN_MERCHANT_ACCOUNT, DEMO_SHOPPER_REFERENCE, reference } = require('./shared.cjs');
 
 exports.handler = async (event, context) => {
   const missing = assertConfig();
@@ -9,22 +9,23 @@ exports.handler = async (event, context) => {
     };
   }
 
-  const { amount, currency, countryCode, shopperLocale, allowedPaymentMethods, enableStoreDetails } = JSON.parse(event.body);
+  const { amount, currency, countryCode, shopperLocale, returnUrl, enableStoreDetails } = JSON.parse(event.body);
   const body = {
     merchantAccount: ADYEN_MERCHANT_ACCOUNT,
     amount: { value: amount, currency },
     countryCode,
     shopperLocale,
+    reference: reference(),
+    returnUrl: returnUrl || 'http://localhost:8080',
     channel: 'Web',
   };
-  if (Array.isArray(allowedPaymentMethods) && allowedPaymentMethods.length) {
-    body.allowedPaymentMethods = allowedPaymentMethods;
-  }
   if (enableStoreDetails) {
     body.shopperReference = DEMO_SHOPPER_REFERENCE;
+    body.recurringProcessingModel = 'CardOnFile';
+    body.shopperInteraction = 'Ecommerce';
   }
   try {
-    const result = await adyenCall('/paymentMethods', body);
+    const result = await adyenCall('/sessions', body);
     return {
       statusCode: result.ok ? 200 : result.status,
       headers: { 'Content-Type': 'application/json' },
