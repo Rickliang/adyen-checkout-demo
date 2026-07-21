@@ -1,4 +1,4 @@
-const { adyenCall, assertConfig, ADYEN_MERCHANT_ACCOUNT, ADYEN_API_KEY, ADYEN_API_VERSION, CHECKOUT_BASE, DEMO_SHOPPER_REFERENCE, reference } = require('./shared.cjs');
+const { adyenCall, assertConfig, ADYEN_MERCHANT_ACCOUNT, ADYEN_API_KEY, ADYEN_API_VERSION, CHECKOUT_BASE, DEMO_SHOPPER_REFERENCE, reference } = require('./shared');
 
 async function handleConfig(event) {
   const missing = assertConfig();

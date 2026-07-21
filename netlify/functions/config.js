@@ -1,4 +1,4 @@
-const { assertConfig } = require('./shared.cjs');
+const { assertConfig } = require('./shared');
 
 exports.handler = async (event, context) => {
   const missing = assertConfig();
