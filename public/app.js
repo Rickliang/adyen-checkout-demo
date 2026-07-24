@@ -152,6 +152,86 @@ const HINTS = {
     zh: { s: '控制账单地址采集模式，full 会展示更完整地址字段。', l: 'billingAddressMode 控制账单地址采集方式：partial 只采集少量字段，full 展示更完整的地址表单。用于平衡转化率与风控需求。' },
     en: { s: 'Control billing address capture; full shows more fields.', l: 'billingAddressMode controls billing address capture: partial collects few fields, full shows a more complete address form. Balances conversion against risk needs.' },
   },
+  billingAddressAllowedCountries: {
+    zh: { s: '限制账单地址可选国家（逗号分隔），留空不限制。', l: 'billingAddressAllowedCountries 限制账单地址下拉里可选的国家列表，例如只允许 NL、US、GB。适合只面向特定市场发货或做合规限制的商户。' },
+    en: { s: 'Restrict selectable billing address countries; empty = all.', l: 'billingAddressAllowedCountries limits which countries appear in the billing address selector, e.g. only NL, US, GB. Useful for merchants shipping to specific markets or with compliance limits.' },
+  },
+  holderNameRequired: {
+    zh: { s: '持卡人姓名是否为必填（需先开启 holderName）。', l: 'holderNameRequired 让持卡人姓名成为必填项，用户不填则无法提交。仅在已开启 holderName 时生效，常用于需要姓名做风控或对账的场景。' },
+    en: { s: 'Make the cardholder name mandatory (needs holderName on).', l: 'holderNameRequired makes the cardholder name a required field so the shopper cannot submit without it. Only applies when holderName is enabled; common when the name is needed for risk or reconciliation.' },
+  },
+  positionHolderNameOnTop: {
+    zh: { s: '把持卡人姓名字段放到卡号上方。', l: 'positionHolderNameOnTop 会把持卡人姓名字段移动到卡号输入框上方，改变表单的字段顺序，用于匹配不同的视觉布局偏好。' },
+    en: { s: 'Move the cardholder name field above the card number.', l: 'positionHolderNameOnTop moves the cardholder name field above the card number input, changing the field order to match different visual layout preferences.' },
+  },
+  showBrandsUnderCardNumber: {
+    zh: { s: '在卡号输入框下方展示支持的卡品牌图标列表。', l: 'showBrandsUnderCardNumber 会在卡号输入框下方显示商户支持的卡品牌图标列表，让用户在输入前就知道支持哪些卡种。' },
+    en: { s: 'Show the list of supported brand icons under the number field.', l: 'showBrandsUnderCardNumber displays the list of supported card-brand icons beneath the card number field so shoppers see accepted schemes before typing.' },
+  },
+  autoFocus: {
+    zh: { s: '输入完一个字段后自动跳到下一个字段。', l: 'autoFocus 会在当前字段输入完成后自动把光标移动到下一个字段（如卡号填满后跳到有效期），减少用户手动切换，提高填写流畅度。' },
+    en: { s: 'Auto-advance focus to the next field when one is complete.', l: 'autoFocus moves the cursor to the next field once the current one is filled (e.g. from card number to expiry), reducing manual switching and smoothing data entry.' },
+  },
+  maskSecurityCode: {
+    zh: { s: '把安全码（CVC）输入显示为掩码圆点。', l: 'maskSecurityCode 会把安全码输入内容显示为圆点掩码，而不是明文数字，用于提升敏感字段的视觉隐私。' },
+    en: { s: 'Mask the security code (CVC) input as dots.', l: 'maskSecurityCode renders the security code as masked dots instead of visible digits, improving the visual privacy of this sensitive field.' },
+  },
+  exposeExpiryDate: {
+    zh: { s: '在组件 state.data 中额外暴露有效期字段。', l: 'exposeExpiryDate 会让组件在 onChange 的 state.data 中额外暴露卡有效期信息，方便前端读取展示，但注意有效期属于敏感信息，需谨慎处理。' },
+    en: { s: 'Expose the expiry date in the component state.data.', l: 'exposeExpiryDate makes the component surface the card expiry date inside onChange state.data for the frontend to read. The expiry is sensitive data, so handle it carefully.' },
+  },
+  disableIOSArrowKeys: {
+    zh: { s: '在 iOS 上隐藏数字键盘上方的上一项/下一项箭头。', l: 'disableIOSArrowKeys 会在 iOS 数字键盘上方隐藏“上一项/下一项”导航箭头，避免用户用箭头在安全字段间跳转导致的体验问题。' },
+    en: { s: 'Hide the prev/next arrows above the iOS numeric keypad.', l: 'disableIOSArrowKeys hides the prev/next navigation arrows above the iOS numeric keypad, avoiding UX issues where shoppers jump between secured fields via those arrows.' },
+  },
+  minimumExpiryDate: {
+    zh: { s: '设置可接受的最早卡有效期，早于该日期视为无效。', l: 'minimumExpiryDate 设置组件接受的最早卡有效期（格式 MM/YY）。早于该日期的有效期会被判为无效，可用于测试有效期校验逻辑。' },
+    en: { s: 'Set the earliest accepted card expiry date.', l: 'minimumExpiryDate sets the earliest card expiry the component accepts (MM/YY). Expiry dates before it are treated as invalid, useful for testing expiry validation.' },
+  },
+  showInstallmentAmounts: {
+    zh: { s: '在分期选项里显示每期的具体金额。', l: 'showInstallmentAmounts 会在分期下拉选项中显示每期的具体金额（而不仅是期数），让用户更直观地看到每期需要支付多少。需要配合 installmentOptions 使用。' },
+    en: { s: 'Show the per-installment amount in the options.', l: 'showInstallmentAmounts displays the amount per installment (not just the number of installments) in the dropdown, so shoppers clearly see how much each payment is. Use together with installmentOptions.' },
+  },
+  installmentOptions: {
+    zh: { s: '分期付款配置（JSON），留空不启用分期。', l: 'installmentOptions 用 JSON 配置分期付款，例如 {"card":{"values":[2,3,4]}} 表示允许分 2、3、4 期。可按卡品牌单独配置，也支持日本的 plans（regular/revolving），用于演示分期支付体验。' },
+    en: { s: 'Installment configuration (JSON); empty disables installments.', l: 'installmentOptions configures installments via JSON, e.g. {"card":{"values":[2,3,4]}} allows 2, 3 or 4 installments. Can be set per brand and supports Japanese plans (regular/revolving), useful for demoing installment payment UX.' },
+  },
+  socialSecurityNumberMode: {
+    zh: { s: '社保号（CPF/CNPJ）字段渲染方式，默认 auto。', l: 'configuration.socialSecurityNumberMode 控制是否渲染社保号字段（如巴西 CPF/CNPJ）。show=总是显示，hide=从不显示，auto=根据卡 BIN 自动判断。默认 auto。' },
+    en: { s: 'How the social security number field renders; default auto.', l: 'configuration.socialSecurityNumberMode controls whether the social security number field (e.g. Brazil CPF/CNPJ) renders. show=always, hide=never, auto=based on the card BIN. Default auto.' },
+  },
+  disclaimerMessage: {
+    zh: { s: '在 Card 组件里展示免责声明，可含超链接。', l: 'disclaimerMessage 在 Card 组件内展示一段免责声明文本。message 里用 %{linkText} 占位，配合 linkText 和 link 可插入一个在新标签打开的超链接。三项都填才会渲染链接。' },
+    en: { s: 'Show a disclaimer message in the Card component, with an optional link.', l: 'disclaimerMessage shows a disclaimer text inside the Card component. Use %{linkText} in message together with linkText and link to insert a hyperlink that opens in a new tab. All three are needed to render the link.' },
+  },
+  brandsConfiguration: {
+    zh: { s: '自定义各卡品牌图标（JSON）。', l: 'brandsConfiguration 用 JSON 自定义各品牌的图标等展示，例如 {"visa":{"icon":"https://..."}}。用于替换默认品牌图标以匹配自有品牌视觉。' },
+    en: { s: 'Customize per-brand icons (JSON).', l: 'brandsConfiguration customizes per-brand display such as icons via JSON, e.g. {"visa":{"icon":"https://..."}}. Used to replace default brand icons to match your own branding.' },
+  },
+  styles: {
+    zh: { s: '自定义安全输入框样式（JSON）。', l: 'styles 用 JSON 自定义 Adyen 安全输入框（卡号/有效期/CVC）的文字颜色、字号、占位符等样式。它作用于 iframe 内的受保护字段，只支持有限的 CSS 属性。' },
+    en: { s: 'Customize secured input field styles (JSON).', l: 'styles customizes the Adyen secured input fields (number/expiry/CVC) such as text color, font size and placeholder via JSON. It applies inside the protected iframes and supports only a limited set of CSS properties.' },
+  },
+  placeholder: {
+    zh: { s: '字段占位符文本（JSON）。', l: 'placeholder 用 JSON 为各字段设置占位符提示文本，例如 {"holderName":"J. Smith"}。占位符以灰字显示，提示期望的输入格式。' },
+    en: { s: 'Placeholder text for fields (JSON).', l: 'placeholder sets placeholder hint text per field via JSON, e.g. {"holderName":"J. Smith"}. Placeholders appear in gray and suggest the expected input format.' },
+  },
+  cardData: {
+    zh: { s: '预填字段值（JSON）。', l: 'data 用 JSON 预填 Card 组件字段，例如 {"holderName":"J. Smith","billingAddress":{...}}。预填 shopper 数据可减少结账摩擦（注意卡号/CVC 等敏感字段无法预填）。' },
+    en: { s: 'Pre-fill field values (JSON).', l: 'data pre-fills Card Component fields via JSON, e.g. {"holderName":"J. Smith","billingAddress":{...}}. Pre-populating shopper data reduces checkout friction (sensitive fields like PAN/CVC cannot be pre-filled).' },
+  },
+  srCollateErrors: {
+    zh: { s: '屏幕阅读器汇总朗读所有错误，默认 true。', l: 'SRConfig.collateErrors 决定屏幕阅读器是否在每次校验后汇总朗读表单里的全部错误，直到错误被修复。属于无障碍行为，不影响可见 UI。默认 true。' },
+    en: { s: 'Screen reader reads out all errors collectively; default true.', l: 'SRConfig.collateErrors decides whether the screen reader reads out all form errors after each validation until fixed. It is accessibility behavior and does not affect the visible UI. Default true.' },
+  },
+  srMoveFocus: {
+    zh: { s: '点击 Pay 后焦点移到首个错误字段，默认 false。', l: 'SRConfig.moveFocus 决定点击 Pay 按钮后焦点是否自动切换到第一个出错字段。只有当 SRConfig.collateErrors 为 true 时才能设置。默认 false。' },
+    en: { s: 'Move focus to the first error field on Pay; default false.', l: 'SRConfig.moveFocus decides whether focus automatically switches to the first field with an error when the shopper selects Pay. Can only be set when SRConfig.collateErrors is true. Default false.' },
+  },
+  addressSearchDebounceMs: {
+    zh: { s: '地址查询回调的防抖毫秒数，默认 300。', l: 'addressSearchDebounceMs 设置地址查询 onAddressLookup 回调的防抖时间（毫秒）。用户停止输入该毫秒数后才触发查询，用于减少地址联想 API 的请求频率。默认 300。' },
+    en: { s: 'Debounce (ms) for the address lookup callback; default 300.', l: 'addressSearchDebounceMs sets the debounce time (ms) for the onAddressLookup address lookup callback. The lookup fires only after the shopper stops typing for that duration, reducing address autocomplete API calls. Default 300.' },
+  },
   showRemovePaymentMethodButton: {
     zh: { s: '在存在 stored payment methods 时显示删除按钮。', l: 'showRemovePaymentMethodButton 在有已保存支付方式时显示删除按钮，让用户可以移除保存过的卡片，常用于账户/钱包管理场景。' },
     en: { s: 'Show a remove button for stored payment methods.', l: 'showRemovePaymentMethodButton shows a delete button when stored payment methods exist, letting shoppers remove saved cards. Common in account/wallet management flows.' },
@@ -238,6 +318,86 @@ const HINT_EXTRA = {
   billingAddressMode: {
     fe: { zh: 'card 的 billingAddressMode（partial / full）。', en: 'card billingAddressMode (partial / full).' },
     be: { zh: '影响 billingAddress 采集的字段数量。', en: 'Affects how many billingAddress fields are collected.' },
+  },
+  billingAddressAllowedCountries: {
+    fe: { zh: 'card 的 billingAddressAllowedCountries 数组。', en: 'card billingAddressAllowedCountries array.' },
+    be: { zh: '纯前端限制账单地址国家；采集到的地址仍进入 billingAddress。', en: 'Frontend-only country restriction; collected address still goes into billingAddress.' },
+  },
+  holderNameRequired: {
+    fe: { zh: 'card 的 holderNameRequired。', en: 'card holderNameRequired.' },
+    be: { zh: '姓名仍进入 paymentMethod.holderName，仅前端做必填校验。', en: 'Name still goes to paymentMethod.holderName; required check is frontend-only.' },
+  },
+  positionHolderNameOnTop: {
+    fe: { zh: 'card 的 positionHolderNameOnTop。', en: 'card positionHolderNameOnTop.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  showBrandsUnderCardNumber: {
+    fe: { zh: 'card 的 showBrandsUnderCardNumber。', en: 'card showBrandsUnderCardNumber.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  autoFocus: {
+    fe: { zh: 'card 的 autoFocus。', en: 'card autoFocus.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  maskSecurityCode: {
+    fe: { zh: 'card 的 maskSecurityCode。', en: 'card maskSecurityCode.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  exposeExpiryDate: {
+    fe: { zh: 'card 的 exposeExpiryDate，影响 onChange 的 state.data。', en: 'card exposeExpiryDate; affects onChange state.data.' },
+    be: { zh: '有效期在加密 blob 内提交，此项不新增明文后端字段。', en: 'Expiry is submitted inside the encrypted blob; adds no plaintext backend field.' },
+  },
+  disableIOSArrowKeys: {
+    fe: { zh: 'card 的 disableIOSArrowKeys。', en: 'card disableIOSArrowKeys.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  minimumExpiryDate: {
+    fe: { zh: 'card 的 minimumExpiryDate。', en: 'card minimumExpiryDate.' },
+    be: { zh: '纯前端校验，不改变后端请求字段。', en: 'Frontend-only validation; no backend request field.' },
+  },
+  showInstallmentAmounts: {
+    fe: { zh: 'card 的 showInstallmentAmounts。', en: 'card showInstallmentAmounts.' },
+    be: { zh: '分期期数最终进入 paymentMethod / installments 字段。', en: 'Chosen installments end up in the paymentMethod / installments field.' },
+  },
+  installmentOptions: {
+    fe: { zh: 'card 的 installmentOptions 对象。', en: 'card installmentOptions object.' },
+    be: { zh: '用户所选分期进入请求的 installments.value 字段。', en: 'The selected plan is sent in the request installments.value field.' },
+  },
+  socialSecurityNumberMode: {
+    fe: { zh: 'card 的 configuration.socialSecurityNumberMode。', en: 'card configuration.socialSecurityNumberMode.' },
+    be: { zh: '采集到的社保号进入 paymentMethod 的 socialSecurityNumber 字段。', en: 'The collected number is sent in paymentMethod.socialSecurityNumber.' },
+  },
+  disclaimerMessage: {
+    fe: { zh: 'card 的 disclaimerMessage（message / linkText / link）。', en: 'card disclaimerMessage (message / linkText / link).' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  brandsConfiguration: {
+    fe: { zh: 'card 的 brandsConfiguration 对象。', en: 'card brandsConfiguration object.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  styles: {
+    fe: { zh: 'card 的 styles 对象（作用于安全字段 iframe）。', en: 'card styles object (applied inside the secured field iframes).' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  placeholder: {
+    fe: { zh: 'card 的 placeholder 对象。', en: 'card placeholder object.' },
+    be: { zh: '纯前端 UI，不改变后端请求字段。', en: 'Frontend-only UI; no backend request field.' },
+  },
+  cardData: {
+    fe: { zh: 'card 的 data 预填对象。', en: 'card data pre-fill object.' },
+    be: { zh: '预填的姓名/地址随支付请求一并发送到对应字段。', en: 'Pre-filled name/address are sent to their respective fields in the payment request.' },
+  },
+  srCollateErrors: {
+    fe: { zh: 'card 的 SRConfig.collateErrors。', en: 'card SRConfig.collateErrors.' },
+    be: { zh: '纯前端无障碍行为，不改变后端请求字段。', en: 'Frontend-only accessibility behavior; no backend request field.' },
+  },
+  srMoveFocus: {
+    fe: { zh: 'card 的 SRConfig.moveFocus。', en: 'card SRConfig.moveFocus.' },
+    be: { zh: '纯前端无障碍行为，不改变后端请求字段。', en: 'Frontend-only accessibility behavior; no backend request field.' },
+  },
+  addressSearchDebounceMs: {
+    fe: { zh: 'card 的 addressSearchDebounceMs。', en: 'card addressSearchDebounceMs.' },
+    be: { zh: '仅影响前端地址联想的触发频率，不改变后端请求字段。', en: 'Only affects frontend address lookup frequency; no backend request field.' },
   },
   showRemovePaymentMethodButton: {
     fe: { zh: 'dropin 的 showRemovePaymentMethodButton，触发 onDisableStoredPaymentMethod 回调。', en: 'dropin showRemovePaymentMethodButton, triggers onDisableStoredPaymentMethod callback.' },
@@ -634,6 +794,24 @@ function readControls() {
       console.warn('Invalid lineItems JSON:', e.message);
     }
   }
+  const billingCountriesRaw = $('billingAddressAllowedCountries') ? $('billingAddressAllowedCountries').value.trim() : '';
+  const parseJson = (id) => {
+    const raw = $(id) ? $(id).value.trim() : '';
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      console.warn(`Invalid ${id} JSON:`, e.message);
+      return null;
+    }
+  };
+  const installmentOptions = parseJson('installmentOptions');
+  const brandsConfiguration = parseJson('brandsConfiguration');
+  const cardStyles = parseJson('styles');
+  const cardPlaceholder = parseJson('placeholder');
+  const cardData = parseJson('cardData');
+  const debounceRaw = $('addressSearchDebounceMs') ? $('addressSearchDebounceMs').value.trim() : '';
+  const addressSearchDebounceMs = debounceRaw && !Number.isNaN(Number(debounceRaw)) ? Number(debounceRaw) : null;
   return {
     flow: document.querySelector('input[name="flow"]:checked').value,
     component: document.querySelector('input[name="component"]:checked').value,
@@ -650,8 +828,27 @@ function readControls() {
     billingAddressRequired: $('billingAddressRequired').checked,
     brands: brandsRaw ? brandsRaw.split(',').map((s) => s.trim()).filter(Boolean) : [],
     showBrandIcon: $('showBrandIcon') ? $('showBrandIcon').checked : true,
-    enableScanning: $('enableScanning') ? $('enableScanning').checked : false,
+    showBrandsUnderCardNumber: $('showBrandsUnderCardNumber') ? $('showBrandsUnderCardNumber').checked : true,
+    brandsConfiguration,
+    styles: cardStyles,
+    placeholder: cardPlaceholder,
+    cardData,
     billingAddressMode: $('billingAddressMode') ? $('billingAddressMode').value : '',
+    billingAddressAllowedCountries: billingCountriesRaw ? billingCountriesRaw.split(',').map((s) => s.trim()).filter(Boolean) : [],
+    holderNameRequired: $('holderNameRequired') ? $('holderNameRequired').checked : false,
+    positionHolderNameOnTop: $('positionHolderNameOnTop') ? $('positionHolderNameOnTop').checked : false,
+    socialSecurityNumberMode: $('socialSecurityNumberMode') ? $('socialSecurityNumberMode').value : '',
+    autoFocus: $('autoFocus') ? $('autoFocus').checked : true,
+    maskSecurityCode: $('maskSecurityCode') ? $('maskSecurityCode').checked : false,
+    minimumExpiryDate: $('minimumExpiryDate') ? $('minimumExpiryDate').value.trim() : '',
+    showInstallmentAmounts: $('showInstallmentAmounts') ? $('showInstallmentAmounts').checked : false,
+    installmentOptions,
+    disclaimerMessageText: $('disclaimerMessageText') ? $('disclaimerMessageText').value.trim() : '',
+    disclaimerMessageLinkText: $('disclaimerMessageLinkText') ? $('disclaimerMessageLinkText').value.trim() : '',
+    disclaimerMessageLink: $('disclaimerMessageLink') ? $('disclaimerMessageLink').value.trim() : '',
+    srCollateErrors: $('srCollateErrors') ? $('srCollateErrors').checked : true,
+    srMoveFocus: $('srMoveFocus') ? $('srMoveFocus').checked : false,
+    addressSearchDebounceMs,
     showRemovePaymentMethodButton: $('showRemovePaymentMethodButton') ? $('showRemovePaymentMethodButton').checked : false,
     showStoredPaymentMethods: $('showStoredPaymentMethods') ? $('showStoredPaymentMethods').checked : true,
     walletButtonType: $('walletButtonType') ? $('walletButtonType').value : '',
@@ -696,15 +893,40 @@ function teardown() {
 function cardUiConfig(cfg) {
   const config = {
     hasHolderName: cfg.hasHolderName,
-    holderNameRequired: cfg.hasHolderName,
+    holderNameRequired: cfg.hasHolderName && cfg.holderNameRequired,
+    positionHolderNameOnTop: cfg.positionHolderNameOnTop,
     enableStoreDetails: cfg.enableStoreDetails,
     hideCVC: cfg.hideCVC,
     billingAddressRequired: cfg.billingAddressRequired,
     showBrandIcon: cfg.showBrandIcon,
-    enableScanning: cfg.enableScanning,
+    showBrandsUnderCardNumber: cfg.showBrandsUnderCardNumber,
+    autoFocus: cfg.autoFocus,
+    maskSecurityCode: cfg.maskSecurityCode,
+    showInstallmentAmounts: cfg.showInstallmentAmounts,
+    SRConfig: { collateErrors: cfg.srCollateErrors, moveFocus: cfg.srMoveFocus },
   };
   if (cfg.brands.length) config.brands = cfg.brands;
+  if (cfg.brandsConfiguration) config.brandsConfiguration = cfg.brandsConfiguration;
+  if (cfg.styles) config.styles = cfg.styles;
+  if (cfg.placeholder) config.placeholder = cfg.placeholder;
+  if (cfg.cardData) config.data = cfg.cardData;
   if (cfg.billingAddressMode) config.billingAddressMode = cfg.billingAddressMode;
+  if (cfg.billingAddressAllowedCountries && cfg.billingAddressAllowedCountries.length) {
+    config.billingAddressAllowedCountries = cfg.billingAddressAllowedCountries;
+  }
+  if (cfg.socialSecurityNumberMode) {
+    config.configuration = { ...(config.configuration || {}), socialSecurityNumberMode: cfg.socialSecurityNumberMode };
+  }
+  if (cfg.minimumExpiryDate) config.minimumExpiryDate = cfg.minimumExpiryDate;
+  if (cfg.installmentOptions) config.installmentOptions = cfg.installmentOptions;
+  if (cfg.disclaimerMessageText) {
+    config.disclaimerMessage = {
+      message: cfg.disclaimerMessageText,
+      linkText: cfg.disclaimerMessageLinkText,
+      link: cfg.disclaimerMessageLink,
+    };
+  }
+  if (cfg.addressSearchDebounceMs != null) config.addressSearchDebounceMs = cfg.addressSearchDebounceMs;
   return config;
 }
 

@@ -605,6 +605,17 @@ select {
   margin-top: 6px;
 }
 
+.param-tier {
+  margin: 10px 10px 2px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dark);
+  background: #eef2f7;
+  border-left: 3px solid var(--accent, #0abf53);
+  border-radius: 4px;
+}
+
 #componentTypeWrap {
   margin-top: 8px;
   padding: 8px;

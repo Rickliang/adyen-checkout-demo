@@ -89,26 +89,6 @@
               <span>openFirstPaymentMethod</span>
             </label>
             <div class="eli5" data-hint="openFirst">进入页面后自动展开第一个支付方式。</div>
-            <label class="check">
-              <input type="checkbox" id="hasHolderName" />
-              <span>holderName</span>
-            </label>
-            <div class="eli5" data-hint="holderName">是否显示持卡人姓名字段。</div>
-            <label class="check">
-              <input type="checkbox" id="enableStoreDetails" checked />
-              <span>enableStoreDetails</span>
-            </label>
-            <div class="eli5" data-hint="enableStoreDetails">是否显示“保存支付详情以备下次使用”。</div>
-            <label class="check">
-              <input type="checkbox" id="hideCVC" />
-              <span>hideCVC</span>
-            </label>
-            <div class="eli5" data-hint="hideCVC">隐藏卡片背面的安全码字段。</div>
-            <label class="check">
-              <input type="checkbox" id="billingAddressRequired" />
-              <span>billingAddressRequired</span>
-            </label>
-            <div class="eli5" data-hint="billingAddressRequired">要求填写完整账单地址。</div>
             <label>
               <span data-i18n="threeDS">3DS challengeWindowSize</span>
               <select id="challengeWindowSize">
@@ -122,32 +102,158 @@
             </label>
             <div class="eli5" data-hint="challengeWindowSize">设置 3DS 验证窗口大小。</div>
 
-            <details class="param-group">
-              <summary>Card 常用参数</summary>
-              <label>
-                <span>brands</span>
-                <input type="text" id="brands" placeholder="visa,mc,amex" />
-              </label>
-              <div class="eli5" data-hint="brands">限制 Card 组件允许展示的卡品牌，留空表示不限制。</div>
+            <details class="param-group" open>
+              <summary>Card 参数（按 UI 影响从高到低）</summary>
+
+              <p class="param-tier">① 表单字段 / 结构（UI 影响最大）</p>
               <label class="check">
-                <input type="checkbox" id="showBrandIcon" checked />
-                <span>showBrandIcon</span>
+                <input type="checkbox" id="hasHolderName" />
+                <span>hasHolderName</span>
               </label>
-              <div class="eli5" data-hint="showBrandIcon">是否在卡号输入框右侧显示识别到的卡品牌图标。</div>
+              <div class="eli5" data-hint="holderName">显示持卡人姓名输入字段。默认 false。</div>
               <label class="check">
-                <input type="checkbox" id="enableScanning" />
-                <span>enableScanning</span>
+                <input type="checkbox" id="holderNameRequired" />
+                <span>holderNameRequired</span>
               </label>
-              <div class="eli5" data-hint="enableScanning">在支持的移动设备上启用扫码/扫描卡片能力。</div>
+              <div class="eli5" data-hint="holderNameRequired">持卡人姓名设为必填（需先开启 hasHolderName）。默认 false。</div>
+              <label class="check">
+                <input type="checkbox" id="positionHolderNameOnTop" />
+                <span>positionHolderNameOnTop</span>
+              </label>
+              <div class="eli5" data-hint="positionHolderNameOnTop">把持卡人姓名字段渲染到表单顶部。默认 false。</div>
+              <label class="check">
+                <input type="checkbox" id="billingAddressRequired" />
+                <span>billingAddressRequired</span>
+              </label>
+              <div class="eli5" data-hint="billingAddressRequired">显示并要求填写账单地址字段。默认 false。</div>
               <label>
                 <span>billingAddressMode</span>
                 <select id="billingAddressMode">
                   <option value="">default</option>
-                  <option value="partial">partial</option>
                   <option value="full">full</option>
+                  <option value="partial">partial</option>
                 </select>
               </label>
-              <div class="eli5" data-hint="billingAddressMode">控制账单地址采集模式，full 会展示更完整地址字段。</div>
+              <div class="eli5" data-hint="billingAddressMode">账单地址采集模式：full=完整地址，partial=仅邮编。需 billingAddressRequired=true。</div>
+              <label>
+                <span>billingAddressAllowedCountries</span>
+                <input type="text" id="billingAddressAllowedCountries" placeholder="US,CA,BR" />
+              </label>
+              <div class="eli5" data-hint="billingAddressAllowedCountries">限制账单地址国家下拉可选项（逗号分隔），留空表示全部国家。</div>
+              <label class="check">
+                <input type="checkbox" id="hideCVC" />
+                <span>hideCVC</span>
+              </label>
+              <div class="eli5" data-hint="hideCVC">隐藏安全码（CVC）字段。默认 false。</div>
+              <label class="check">
+                <input type="checkbox" id="enableStoreDetails" checked />
+                <span>enableStoreDetails</span>
+              </label>
+              <div class="eli5" data-hint="enableStoreDetails">显示“保存卡片以便下次使用”勾选框。默认 false。</div>
+              <label>
+                <span>socialSecurityNumberMode</span>
+                <select id="socialSecurityNumberMode">
+                  <option value="">auto (default)</option>
+                  <option value="show">show</option>
+                  <option value="hide">hide</option>
+                  <option value="auto">auto</option>
+                </select>
+              </label>
+              <div class="eli5" data-hint="socialSecurityNumberMode">社保号（CPF/CNPJ）字段渲染方式，巴西部分卡支付需要。默认 auto（按 BIN 判断）。</div>
+              <label>
+                <span>installmentOptions (JSON)</span>
+                <textarea id="installmentOptions" placeholder="{&quot;card&quot;:{&quot;values&quot;:[2,3,4]}}" style="height: 48px; font-size: 12px;"></textarea>
+              </label>
+              <div class="eli5" data-hint="installmentOptions">分期付款配置（JSON）。例如 {"card":{"values":[2,3,4]}}，留空表示不启用分期。</div>
+              <label class="check">
+                <input type="checkbox" id="showInstallmentAmounts" />
+                <span>showInstallmentAmounts</span>
+              </label>
+              <div class="eli5" data-hint="showInstallmentAmounts">在分期下拉里显示每期的具体金额。需配合 installmentOptions。默认 false。</div>
+              <label>
+                <span>disclaimerMessage.message</span>
+                <input type="text" id="disclaimerMessageText" placeholder="By continuing you accept the %{linkText}" />
+              </label>
+              <label>
+                <span>disclaimerMessage.linkText</span>
+                <input type="text" id="disclaimerMessageLinkText" placeholder="terms and conditions" />
+              </label>
+              <label>
+                <span>disclaimerMessage.link</span>
+                <input type="text" id="disclaimerMessageLink" placeholder="https://..." />
+              </label>
+              <div class="eli5" data-hint="disclaimerMessage">在 Card 组件里展示一段免责声明，可用 %{linkText} 插入超链接。三项都填才会显示链接。</div>
+
+              <p class="param-tier">② 品牌 / 视觉展示</p>
+              <label>
+                <span>brands</span>
+                <input type="text" id="brands" placeholder="mc,visa,amex" />
+              </label>
+              <div class="eli5" data-hint="brands">要识别的卡品牌数组（逗号分隔）。留空则用默认 ['mc','visa','amex']。</div>
+              <label class="check">
+                <input type="checkbox" id="showBrandsUnderCardNumber" checked />
+                <span>showBrandsUnderCardNumber</span>
+              </label>
+              <div class="eli5" data-hint="showBrandsUnderCardNumber">在卡号字段下方展示支持的卡品牌图标。默认 true。</div>
+              <label class="check">
+                <input type="checkbox" id="showBrandIcon" checked />
+                <span>showBrandIcon</span>
+              </label>
+              <div class="eli5" data-hint="showBrandIcon">识别到卡品牌后在卡号框右侧显示品牌图标。默认 true。</div>
+              <label>
+                <span>brandsConfiguration (JSON)</span>
+                <textarea id="brandsConfiguration" placeholder="{&quot;visa&quot;:{&quot;icon&quot;:&quot;https://...&quot;}}" style="height: 48px; font-size: 12px;"></textarea>
+              </label>
+              <div class="eli5" data-hint="brandsConfiguration">自定义各品牌图标（JSON）。例如 {"visa":{"icon":"https://..."}}。</div>
+              <label>
+                <span>styles (JSON)</span>
+                <textarea id="styles" placeholder="{&quot;base&quot;:{&quot;color&quot;:&quot;#000&quot;}}" style="height: 48px; font-size: 12px;"></textarea>
+              </label>
+              <div class="eli5" data-hint="styles">自定义安全输入框样式（JSON）。例如 {"base":{"color":"#000","fontSize":"16px"}}。</div>
+              <label>
+                <span>placeholder (JSON)</span>
+                <textarea id="placeholder" placeholder="{&quot;holderName&quot;:&quot;J. Smith&quot;}" style="height: 48px; font-size: 12px;"></textarea>
+              </label>
+              <div class="eli5" data-hint="placeholder">字段占位符文本（JSON）。例如 {"holderName":"J. Smith"}。</div>
+              <label>
+                <span>data (JSON 预填)</span>
+                <textarea id="cardData" placeholder="{&quot;holderName&quot;:&quot;J. Smith&quot;}" style="height: 48px; font-size: 12px;"></textarea>
+              </label>
+              <div class="eli5" data-hint="cardData">预填字段值（JSON）。例如 {"holderName":"J. Smith","billingAddress":{...}}。</div>
+
+              <p class="param-tier">③ 字段级微调</p>
+              <label class="check">
+                <input type="checkbox" id="maskSecurityCode" />
+                <span>maskSecurityCode</span>
+              </label>
+              <div class="eli5" data-hint="maskSecurityCode">把安全码（CVC）输入显示为掩码圆点。默认 false。</div>
+              <label>
+                <span>minimumExpiryDate</span>
+                <input type="text" id="minimumExpiryDate" placeholder="mm/yy 如 03/30" />
+              </label>
+              <div class="eli5" data-hint="minimumExpiryDate">早于该有效期会提示“卡在结账前已过期”。格式 mm/yy。</div>
+              <label class="check">
+                <input type="checkbox" id="autoFocus" checked />
+                <span>autoFocus</span>
+              </label>
+              <div class="eli5" data-hint="autoFocus">字段输入完成后自动把焦点移到下一个字段。默认 true。</div>
+
+              <p class="param-tier">④ 无障碍 / 行为（几乎无可见 UI）</p>
+              <label class="check">
+                <input type="checkbox" id="srCollateErrors" checked />
+                <span>SRConfig.collateErrors</span>
+              </label>
+              <div class="eli5" data-hint="srCollateErrors">屏幕阅读器在每次校验后汇总朗读表单里的所有错误。默认 true。</div>
+              <label class="check">
+                <input type="checkbox" id="srMoveFocus" />
+                <span>SRConfig.moveFocus</span>
+              </label>
+              <div class="eli5" data-hint="srMoveFocus">点击 Pay 后自动把焦点移到第一个出错字段（需 collateErrors=true）。默认 false。</div>
+              <label>
+                <span>addressSearchDebounceMs</span>
+                <input type="text" id="addressSearchDebounceMs" placeholder="300" />
+              </label>
+              <div class="eli5" data-hint="addressSearchDebounceMs">地址查询 onAddressLookup 回调的防抖毫秒数。默认 300。</div>
             </details>
 
             <details class="param-group">

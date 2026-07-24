@@ -2,6 +2,8 @@
 command = "npm install"
 functions = "netlify/functions"
 publish = "public"
+# Skip auto-build on every push (saves credits). Trigger deploys manually in the Netlify UI.
+ignore = "exit 0"
 
 [functions]
 directory = "netlify/functions"
