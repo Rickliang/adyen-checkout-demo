@@ -9,10 +9,6 @@ ignore = "exit 0"
 directory = "netlify/functions"
 node_bundler = "esbuild"
 
-[[edge_functions]]
-path = "/*"
-function = "auth"
-
 [[redirects]]
 from = "/api/*"
 to = "/.netlify/functions/api/:splat"
